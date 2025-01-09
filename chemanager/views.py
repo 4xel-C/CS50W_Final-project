@@ -1,3 +1,8 @@
 from django.shortcuts import render
 
-# Create your views here.
+# index view
+def index(request):
+    return render(request, "chemanager/index.html")
+    
+def login(request):
+    return render(request, "chemanager/login.html")
