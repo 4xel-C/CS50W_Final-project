@@ -12,8 +12,6 @@
             {% endif %}
             <form action="" method="post">
                 {% csrf_token %}
-                {% comment %} hide the value of the next url {% endcomment %}
-                <input type="hidden" name="next" value="{{ next }}">
                 <div class="form-group">
                     <input autofocus class="form-control my-2" type="text" name="username" placeholder="Username">
                 </div>
