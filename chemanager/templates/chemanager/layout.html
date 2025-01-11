@@ -13,7 +13,9 @@
     <body>
         <nav class="navbar navbar-expand-lg bg-body-tertiary border-body" data-bs-theme="dark">
             <div class="container-fluid">
-              <a class="navbar-brand" href="{% url 'index' %}">Chemanager</a>
+              <a class="navbar-brand" href="{% url 'index' %}">
+                <img src="{% static 'chemanager/icons/flask_icon.png' %}" style="width: 30px; height: 30px;" alt="Flask Icon">
+                Chemanager</a>
               <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
               </button>
@@ -21,15 +23,15 @@
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 {% if user.is_authenticated %}
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle {% if '/' == request.path or 'closed' in request.path or 'create' in request.path %} active {% endif %}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Listing</a>
+                        <a class="nav-link dropdown-toggle {% if '/' == request.path or 'closed' in request.path or 'create' in request.path %} active {% endif %}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Products</a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="">Active listings</a></li>
-                            <li><a class="dropdown-item" href="">Closed Listings</a></li>
+                            <li><a class="dropdown-item" href="">All Produtcs</a></li>
+                            <li><a class="dropdown-item" href="">My laboratory</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="">Create Listing</a></li>
+                            <li><a class="dropdown-item" href="">Register a new product</a></li>
                         </ul>
                     </li>
-                    <li class="nav-item"><a class="nav-link {% if 'categories' in request.path %} active {% endif %}" href="">Categories</a></li>
+                    <li class="nav-item"><a class="nav-link {% if 'categories' in request.path %} active {% endif %}" href="">Analysis Panel</a></li>
                     <li class="nav-item"><a class="nav-link {% if 'watchlist' in request.path %} active {% endif %}" href="">Watchlist</a></li>
                     <li class="nav-item"><a class="nav-link {% if 'auctions' in request.path %} active {% endif %}" href="">My auctions</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Log Out</a></li>
