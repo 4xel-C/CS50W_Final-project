@@ -1,11 +1,12 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User
+from .models import User, Laboratory
 
 
 # index view
@@ -50,6 +51,7 @@ def register(request):
     if request.method == "POST":
         username = request.POST["username"]
         email = request.POST["email"]
+        no_lab = request.POST["no_lab"]
 
         # Ensure password matches confirmation
         password = request.POST["password"]
@@ -61,10 +63,22 @@ def register(request):
         elif not username or not email or not password:
             messages.error(request, "Missing informations!")
             return render(request, "chemanager/register.html")
+        
+        # Try to get the correct laboratory to register the user
+        if no_lab:
+            laboratory = None
+        else:
+            lab_number = request.POST["laboratory"]
+            try:
+                laboratory = Laboratory.objects.get(lab_number=lab_number)
+            except ObjectDoesNotExist:
+                messages.error(request, "The laboratory you try to register on does not exist")
+                return render(request, "chemanager/register.html")
+        
 
         # Attempt to create new user and return an error if username already taken
         try:
-            user = User.objects.create_user(username, email, password)
+            user = User.objects.create_user(username=username, email=email, password=password, laboratory=laboratory)
             user.save()
         except IntegrityError:
             messages.error(request, "Username already taken!")
@@ -74,5 +88,13 @@ def register(request):
         login(request, user)
         messages.success(request, "Account successfully created!")
         return HttpResponseRedirect(reverse("index"))
+    
+    # If GET method, display the page
+    if request.method == "GET":
 
-    return render(request, "chemanager/register.html")
+        # get the laboratory for the form
+        laboratories = Laboratory.objects.all()
+
+        return render(request, "chemanager/register.html", {
+            "laboratories": laboratories
+        })
