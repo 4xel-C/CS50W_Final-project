@@ -10,6 +10,7 @@ function createRow(lab){
     return newRow
 }
 
+// Function to create the last row of the table containing the total number of compounds
 function createTotalRow(total){
     let totalRow = document.createElement('tr');
     totalRow.classList.add('table-active');
@@ -20,6 +21,7 @@ function createTotalRow(total){
     return totalRow;
 }
 
+// Main function
 document.addEventListener("DOMContentLoaded", async () => {
 
     // query selectors
@@ -27,7 +29,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Fetch site data
     const data = await fetchSite();
-    
+     
     // Complete the table
     data.laboratories.forEach(lab => {
         const newRow = createRow(lab);

@@ -8,7 +8,7 @@ class Laboratory(models.Model):
 
     def __str__(self):
         return self.lab_number
-    
+
     def count_products(self):
         """
         Give the number of product contained in one laboratory
@@ -21,11 +21,10 @@ class Laboratory(models.Model):
 
     def serialize(self):
         return {
-            "id": self.id, 
+            "id": self.id,
             "labNumber": self.lab_number,
-            "productCount": self.count_products()
+            "productCount": self.count_products(),
         }
-
 
 
 # Substorage inside laboratories (boxes)
@@ -43,13 +42,16 @@ class User(AbstractUser):
         Laboratory, on_delete=models.SET_NULL, null=True, blank=True
     )
 
+
 class Product(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
     quantity = models.DecimalField(
         max_digits=10, decimal_places=3, help_text="Quantity available in g"
     )
-    purity = models.DecimalField(max_digits=4, decimal_places=1, null=True, help_text="in %")
+    purity = models.DecimalField(
+        max_digits=4, decimal_places=1, null=True, help_text="in %"
+    )
     cas_number = models.CharField(max_length=50, null=True)
     producer = models.CharField(max_length=200, null=True)
     location = models.ForeignKey(
