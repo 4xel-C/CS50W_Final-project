@@ -24,14 +24,20 @@ function createTotalRow(total){
 // Main function
 document.addEventListener("DOMContentLoaded", async () => {
 
-    // query selectors
+    // query selectors and constants
     const tableBody = document.querySelector('.table-body');
+    const ctx = document.querySelector('#productChart').getContext('2d');
+    const labNames = [];
+    const productCount = [];
+
 
     // Fetch site data
     const data = await fetchSite();
      
-    // Complete the table
+    // Complete the table and use the loop to get the informations for the bar chart
     data.laboratories.forEach(lab => {
+        labNames.push(lab.labNumber);
+        productCount.push(lab.productCount);
         const newRow = createRow(lab);
         tableBody.append(newRow);
     });
@@ -39,4 +45,27 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Add the total line
     const totalRow = createTotalRow(data.total);
     tableBody.append(totalRow);
+
+    // feed the bar chart
+    const productChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labNames,
+            datasets: [{
+                label: 'Product count',
+                data: productCount,
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    })
 });

@@ -6,17 +6,17 @@
     <h1 class="page-title">Site View</h1>
 </div>
 
-<div class="container stats">
+<div class="container stats align-items-center">
     <div class="row">
 
         <!-- Table section -->
-        <div class="col-6">
+        <div class="col-lg-6">
             <h2>Products per labs</h2>
             <table class="table">
                 <thead>
                   <tr>
                     <th scope="col">Laboratory</th>
-                    <th scope="col">Product counts</th>
+                    <th scope="col">Product count</th>
                   </tr>
                 </thead>
                 <tbody class="table-body">
@@ -25,8 +25,8 @@
         </div>
 
         <!-- Graph section -->
-        <div class="col-6">
-
+        <div class="col-lg-6 d-flex align-items-center justify-content-center">
+            <canvas id="productChart" width="400" height="200"></canvas>
         </div>
     </div>
 </div>
