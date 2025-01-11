@@ -1,25 +1,20 @@
+import { allFilled } from "./helpers.js";
+
 document.addEventListener('DOMContentLoaded', () => {
 
-    // declare the event listener
-    const usernameInput = document.querySelector('#username');
-    const passwordInput = document.querySelector('#password');
+    // declare the event listener and select all inputs and check if all input are all filled.
     const submitButton = document.querySelector('#submit');
+
+    // select all inputs
+    const inputs = document.querySelectorAll("input");
 
     // Disable the submit button by default
     submitButton.disabled = true;
 
-    // Function to activate the button if both input fields are not empty
-    const checkInputs = () => {
-        
-        // Check if inputs are not empty
-        if (usernameInput.value.trim() !== '' && passwordInput.value.trim() !== '') {
-            submitButton.disabled = false;
-        } else {
-            submitButton.disabled = true;
-        }
-    }
-
-    // Add event listener to enable the button if text is entered
-    usernameInput.addEventListener('keyup', checkInputs);
-    passwordInput.addEventListener('keyup', checkInputs);
-})
+    // Add event listener to each inputs to enable the button if all field compelte
+    inputs.forEach(input => {
+        input.addEventListener('keyup', () => {
+            submitButton.disabled = !allFilled(inputs);
+        });
+    });
+});

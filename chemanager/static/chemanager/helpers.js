@@ -1,6 +1,5 @@
-
 // Create a bootstrap alert and append it to the alert container to dislay it using bootstrap classes.
-// take 2 arguments: message, and type of the alert (default success)
+// take 2 arguments: message, and type of the alert (default: success)
 export function showAlert(message, type="success") {
     const alert = document.createElement("div");
     alert.className = `alert alert-${type} alert-dismissible text-center position-fixed top-0 start-50 translate-middle-x w-100`;
@@ -24,4 +23,30 @@ export function showAlert(message, type="success") {
         alert.classList.add("fade");
         setTimeout(() => alert.remove(), 500);
     }, 2000);
+}
+
+// Function to get cookies (for csrf validation)
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            
+            // Check for the right cookie
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Function to check if a NodeList of input are all filled
+export function allFilled (inputs) {
+    if (Array.from(inputs).every(input => input.value.trim() !== '')){
+        return true
+    }
+    return false
 }
