@@ -2,16 +2,28 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User, Laboratory
+from .models import User, Laboratory 
 
 
 # index view
 def index(request):
-    return render(request, "chemanager/index.html")
+
+    # get the labs
+    labs = Laboratory.objects.all()
+    total_products = 0
+
+    # get the total counts of products in the labs
+    for lab in labs:
+        total_products += lab.count_products()
+
+    return render(request, "chemanager/index.html", {
+        "labs": labs,
+        "total": total_products
+    })
 
 
 def logout_view(request):
@@ -98,3 +110,41 @@ def register(request):
         return render(request, "chemanager/register.html", {
             "laboratories": laboratories
         })
+    
+# inventory view
+def inventory(request):
+    return render(request, "chemanager/inventory.html")
+
+# register view
+def add_product(request):
+    return render(request, "chemanager/add.html")
+
+
+# -----------------------------------------------------------API Views
+
+def site(request):
+    """
+    API route to get all the laboratories and the number of products they contains with the total on site.
+    Method: GET
+    URL: /site
+    Authentication not required
+    """
+    if request.method == "GET":
+
+        # get the labs
+        labs = Laboratory.objects.all().order_by('lab_number')
+
+        # get the total products on the site
+        total = 0
+
+        for lab in labs:
+            total += lab.count_products()
+
+        response_data = [lab.serialize() for lab in labs]
+        return JsonResponse({"laboratories": response_data, "total": total}, status=200)
+    
+    else:
+        return JsonResponse({'error': 'Bad request'}, status=400)
+
+
+

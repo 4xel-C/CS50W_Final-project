@@ -50,3 +50,5 @@ export function allFilled (inputs) {
     }
     return false
 }
+
+// ----------------Builder functions

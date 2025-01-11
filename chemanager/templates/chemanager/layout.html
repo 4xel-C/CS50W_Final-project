@@ -22,21 +22,21 @@
               <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 {% if user.is_authenticated %}
+                    <li class="nav-item"><a class="nav-link {% if '/' == request.path %} active {% endif %}" href="/">Site View</a></li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle {% if '/' == request.path or 'closed' in request.path or 'create' in request.path %} active {% endif %}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Products</a>
+                        <a class="nav-link dropdown-toggle {% if 'inventory' in request.path %} active {% endif %}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Products</a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="">All Produtcs</a></li>
-                            <li><a class="dropdown-item" href="">My laboratory</a></li>
+                            <li><a class="dropdown-item" href="{% url 'inventory' %}">All Products</a></li>
+                            <li><a class="dropdown-item" href="{% url 'mylab' %}">My laboratory</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="">Register a new product</a></li>
+                            <li><a class="dropdown-item" href="{% url 'add_product' %}">Register a new product</a></li>
                         </ul>
                     </li>
-                    <li class="nav-item"><a class="nav-link {% if 'categories' in request.path %} active {% endif %}" href="">Analysis Panel</a></li>
-                    <li class="nav-item"><a class="nav-link {% if 'watchlist' in request.path %} active {% endif %}" href="">Watchlist</a></li>
-                    <li class="nav-item"><a class="nav-link {% if 'auctions' in request.path %} active {% endif %}" href="">My auctions</a></li>
+                    <li class="nav-item"><a class="nav-link {% if 'watchlist' in request.path %} active {% endif %}" href="{% url 'watchlist' %}">Watchlist</a></li>
+                    <li class="nav-item"><a class="nav-link {% if 'analysis' in request.path %} active {% endif %}" href="">Analysis Panel</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Log Out</a></li>
                 </ul>
-                <form class="d-flex" role="search" action="" method="get">
+                <form class="d-flex" role="search" action="/inventory" method="get">
                   <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="q">
                   <button class="btn btn-outline-success" type="submit">Search</button>
                 </form>
