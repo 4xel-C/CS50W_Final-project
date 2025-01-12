@@ -22,25 +22,23 @@ export async function fetchSite(){
     }
 }
 
+// Fetch all the products, speicific product by Id, or product tagged as favorites
 export async function fetchProducts(path, labId = null, productId = null){
 
     // API URL
     let URL='/products'
 
-    // check labId
-    if (labId === 'None'){
-        labId = null
-    }
-
     // if fetching only current laboratory because user choose 'mylab' menu
-    if (path.includes('mylab')){
+    if (path.includes('mylab')) {
 
         // if no lab specified for the user and try to access my lab, return none object
         if(!labId){
             return null
         }
         URL += `/laboratory/${labId}`
-    } 
+    } else if (path.includes('watchlist')) {
+        URL += '/watchlist'
+    }
 
     // get the products with the correct URL
     try {
@@ -50,16 +48,15 @@ export async function fetchProducts(path, labId = null, productId = null){
         // Fetching error handling
         if (!response.ok){
             const errorData = await response.json();
-            throw new Error(`HTTP error : ${errorData.status}, Message : ${errorData.error || 'Unknown Error'}`);
+            throw new Error(`HTTP error : ${response.status}, Message : ${errorData.error || 'Unknown Error'}`);
         }
 
         const data = await response.json();
         return data
 
     } catch(error) {
-        console.error('Problem occured while fetching datas: ', error.message);
         throw error;
-    }
+}
 }
 
 // delete a product
@@ -79,14 +76,13 @@ export async function deleteProduct(id){
         // Fetching error handling
         if (!response.ok){
             const errorData = await response.json();
-            throw new Error(`HTTP error : ${errorData.status}, Message : ${errorData.error || 'Unknown Error'}`);
+            throw new Error(`HTTP error : ${response.status}, Message : ${errorData.error || 'Unknown Error'}`);
         }
 
         const confirmation = await response.json();
         return confirmation;
 
     } catch(error) {
-        console.error('Problem occured while fetching datas: ', error.message);
         throw error;
     }
 }
@@ -109,14 +105,13 @@ export async function favoriteProduct(id){
         // Fetching error handling
         if (!response.ok){
             const errorData = await response.json();
-            throw new Error(`HTTP error : ${errorData.status}, Message : ${errorData.error || 'Unknown Error'}`);
+            throw new Error(`HTTP error : ${response.status}, Message : ${errorData.error || 'Unknown Error'}`);
         }
 
         const confirmation = await response.json();
         return confirmation;
 
     } catch(error) {
-        console.error('Problem occured while fetching datas: ', error.message);
         throw error;
     }
 }

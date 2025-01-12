@@ -114,7 +114,7 @@ def inventory(request):
     try:
         lab_id = user.laboratory.id
     except AttributeError:
-        lab_id = None
+        lab_id = ""
 
     return render(request, "chemanager/inventory.html", {
         'labId': lab_id
@@ -173,9 +173,10 @@ def products(request, id=None):
     if not user.is_authenticated:
         return JsonResponse({"error": "Authentification required"}, status=401)
 
+    # GET method to fetch datas
     if request.method == "GET":
         try:
-            products = query_products(path)
+            products = query_products(path=path, user=user, id=id)
         except ObjectDoesNotExist:
             return JsonResponse({"error": "Ressource not found"}, status=404)
 
@@ -187,7 +188,7 @@ def products(request, id=None):
     # Delete method to delete a specific product
     elif request.method == "DELETE":
         try:
-            product = query_products(id=id)
+            product = query_products(path=path, id=id)
         except ObjectDoesNotExist:
             return JsonResponse({"error": "Ressource not found"}, status=404)
         product.delete()
@@ -197,7 +198,7 @@ def products(request, id=None):
     # Tag a product as a 'favorite' for the user if not already a favorite, otherwise, remove from the favorite list
     elif request.method == "PUT" and "favorite" in path:
         try:
-            product = query_products(id=id)
+            product = query_products(path=path, id=id)[0]
         except ObjectDoesNotExist:
             return JsonResponse({"error": "Ressource not found"}, status=404)
         

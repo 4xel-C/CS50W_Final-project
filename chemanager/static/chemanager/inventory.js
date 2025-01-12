@@ -15,13 +15,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Update the title
     if (path.includes('mylab')) {
         title.innerHTML = 'My laboratory'
+    } else if  (path.includes('watchlist')){
+        title.innerHTML = 'My favorite products'
     }
 
-    // fetch the correct data
+    // fetch the correct data of set null 
     const data = await fetchProducts(path, labId);
-
+    
     // Build the table
-    if (!data){
+    if (!data?.products[0]){
         tableContainer.hidden = true;
         noProduct.hidden = false;
     }
