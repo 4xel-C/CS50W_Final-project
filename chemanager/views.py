@@ -120,9 +120,16 @@ def inventory(request, id=None):
             lab_id = user.laboratory.id
         except AttributeError:
             lab_id = ""
+    
+    # get the number of the laboratory
+    try:
+        lab_number = Laboratory.objects.get(id=id).lab_number
+    except ObjectDoesNotExist:
+        lab_number = ""
 
     return render(request, "chemanager/inventory.html", {
-        'labId': lab_id
+        'labId': lab_id,
+        'labNumber': lab_number
     })
 
 
@@ -200,19 +207,27 @@ def products(request, id=None):
 
         return JsonResponse({"message": "Prodcut deleted successfully"}, status=200)
     
-    # Tag a product as a 'favorite' for the user if not already a favorite, otherwise, remove from the favorite list
-    elif request.method == "PUT" and "favorite" in path:
-        try:
-            product = query_products(path=path, id=id)[0]
-        except ObjectDoesNotExist:
-            return JsonResponse({"error": "Ressource not found"}, status=404)
+    # Edit a product (location, purity, name, ...) or add a product to favorite
+    elif request.method == "PUT":
+
+        # if favorite in path: tag the product as a 'favorite'
+        if "favorite" in path:
+            try:
+                product = query_products(path=path, id=id)[0]
+            except ObjectDoesNotExist:
+                return JsonResponse({"error": "Ressource not found"}, status=404)
+            
+            if product.is_favorite(user):
+                product.favorites.remove(user)
+                return JsonResponse({"message": "Product removed from favorite", "action": "unfavorite"}, status=200)
+            else:
+                product.favorites.add(user)
+                return JsonResponse({"message": "Product add to favorite", "action": "favorite"}, status=200)
         
-        if product.is_favorite(user):
-            product.favorites.remove(user)
-            return JsonResponse({"message": "Product removed from favorite", "action": "unfavorite"}, status=200)
+        # update a product
         else:
-            product.favorites.add(user)
-            return JsonResponse({"message": "Product add to favorite", "action": "favorite"}, status=200)
+            pass
+
 
 
         

@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const noProduct = document.querySelector('.no-product');
 
     const labId = table.getAttribute('data-myLab');
+    const labNumber = title.getAttribute('data-labNumber');
     const path = window.location.pathname;
 
     // Update the title
@@ -18,6 +19,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         title.innerHTML = 'My laboratory'
     } else if  (path.includes('watchlist')){
         title.innerHTML = 'My favorite products'
+    } else if (path.includes('laboratory')){
+        title.innerHTML = `Laboratory ${labNumber}`
     }
 
     // fetch data

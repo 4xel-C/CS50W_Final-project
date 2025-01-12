@@ -66,7 +66,7 @@ export async function deleteProduct(id){
 
     try {
         // try to fetch the data
-        const response = await fetch(`products/${id}`, {
+        const response = await fetch(`/products/${id}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -95,7 +95,7 @@ export async function favoriteProduct(id){
 
     try {
         // try to fetch the data
-        const response = await fetch(`products/${id}/favorite`, {
+        const response = await fetch(`/products/${id}/favorite`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -115,4 +115,35 @@ export async function favoriteProduct(id){
     } catch(error) {
         throw error;
     }
+}
+
+// Edit a product
+export async function editProduct(id, updatedData){
+
+    const csrfToken = getCookie('csrftoken');
+
+    try {
+        // try to fetch the data
+        const response = await fetch(`products/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify(updatedData)
+        });
+
+        // Fetching error handling
+        if (!response.ok){
+            const errorData = await response.json();
+            throw new Error(`HTTP error : ${response.status}, Message : ${errorData.error || 'Unknown Error'}`);
+        }
+
+        const confirmation = await response.json();
+        return confirmation;
+
+    } catch(error) {
+        throw error;
+    }
+
 }
