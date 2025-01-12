@@ -55,6 +55,18 @@ export function allFilled (inputs) {
     return false
 }
 
+// Filter the data from a GET parameter '?q=' to get only the data by keywords, take into consideration name, cas, and laboratory
+export function filterData(products, query){
+    let productsFiltered = []
+    
+    products.forEach(product => {
+        if (product.name.includes(query) || product.cas.includes(query) || product.lab.includes(query)) {
+            productsFiltered.push(product);
+        }
+    });
+    return productsFiltered;
+}
+
 // -------------------------------------------------------------------Element Builder functions
 
 // Function to build row for the table displaying products

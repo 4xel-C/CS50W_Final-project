@@ -1,4 +1,5 @@
-import { createRow } from "./helpers.js";
+import { createRow, filterData } from "./helpers.js";
+
 import { fetchProducts } from "./api.js";
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -20,16 +21,27 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // fetch the correct data of set null 
-    const data = await fetchProducts(path, labId);
+    const data = await fetchProducts(labId);
+
+    // get the GET parameter for the search function and filter the datas if present
+    const query = new URLSearchParams(window.location.search).get('q');
+    let products = [];
+
+    if (query) {
+        products = filterData(data.products, query);
+    } else {
+        products = data?.products;
+    }
     
     // Build the table
-    if (!data?.products[0]){
+    if (!products || products?.length === 0){
         tableContainer.hidden = true;
         noProduct.hidden = false;
+    } else {
+        products?.forEach(product => {
+            const newRow = createRow(product);
+            table.append(newRow)
+        });
     }
-    data?.products?.forEach(product => {
-        const newRow = createRow(product);
-        table.append(newRow)
-    });
 
 })

@@ -23,9 +23,10 @@ export async function fetchSite(){
 }
 
 // Fetch all the products, speicific product by Id, or product tagged as favorites
-export async function fetchProducts(path, labId = null, productId = null){
+export async function fetchProducts(labId = null, productId = null){
 
     // API URL
+    const path = window.location.pathname;
     let URL='/products'
 
     // if fetching only current laboratory because user choose 'mylab' menu
