@@ -2,17 +2,23 @@ import { fetchSite } from "./api.js";
 
 // Function to create row of the table from the index page displaying lab informationS
 function createRow(lab){
-    let newRow = document.createElement('tr');
+    const newRow = document.createElement('tr');
     newRow.innerHTML = `
         <th scope="row">${lab.labNumber}</th>
         <td>${lab.productCount}</td>
     `
+
+    // event listener to fetch all the products 
+    newRow.addEventListener('click', () => {
+        window.location.href = `/inventory/laboratory/${lab.id}`; 
+    })
+
     return newRow
 }
 
 // Function to create the last row of the table containing the total number of compounds
 function createTotalRow(total){
-    let totalRow = document.createElement('tr');
+    const totalRow = document.createElement('tr');
     totalRow.classList.add('table-active');
     totalRow.innerHTML = `
         <th scope="row">Total on site</th>

@@ -107,14 +107,19 @@ def register(request):
 
 # inventory view
 @login_required
-def inventory(request):
+def inventory(request, id=None):
     user = request.user
 
-    # get the laboratory id of the current user
-    try:
-        lab_id = user.laboratory.id
-    except AttributeError:
-        lab_id = ""
+    # get the laboratory id if trying to access URL inventory\laboratory\'id'
+    if "laboratory" in request.path:
+        lab_id = id
+
+    else:
+        # get the laboratory id of the current user
+        try:
+            lab_id = user.laboratory.id
+        except AttributeError:
+            lab_id = ""
 
     return render(request, "chemanager/inventory.html", {
         'labId': lab_id

@@ -29,8 +29,8 @@ export async function fetchProducts(labId = null, productId = null){
     const path = window.location.pathname;
     let URL='/products'
 
-    // if fetching only current laboratory because user choose 'mylab' menu
-    if (path.includes('mylab')) {
+    // fethcing only the specific lab depending of url (mylab = user lab or another selected laboratory)
+    if (path.includes('mylab') || path.includes('laboratory')) {
 
         // if no lab specified for the user and try to access my lab, return none object
         if(!labId){

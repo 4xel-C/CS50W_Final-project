@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         title.innerHTML = 'My favorite products'
     }
 
-    // fetch the correct data of set null 
+    // fetch data
     const data = await fetchProducts(labId);
 
     // get the GET parameter for the search function and filter the datas if present
