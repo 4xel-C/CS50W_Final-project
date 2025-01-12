@@ -79,8 +79,8 @@ export function createRow(product){
             <td>${product.purity}%</td>
             <td>${product.lab} / Box: ${product.box}</td>
             <td class='actions'> 
-                <button class="btn p-0 like-button text-warning favorite"><i class="bi bi-star${product.isFavorite? '-fill' : ''}"></i></button> 
-                <button class="btn p-0 like-button text-danger delete"><i class="bi bi-trash"></i></button>
+                <button class="btn p-0 text-warning favorite"><i class="bi bi-star${product.isFavorite? '-fill' : ''}"></i></button> 
+                <button class="btn p-0 text-danger delete"><i class="bi bi-trash"></i></button>
             </td>
     `
     const favoriteButton = newRow.querySelector('.favorite');
