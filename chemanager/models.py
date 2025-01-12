@@ -45,6 +45,7 @@ class User(AbstractUser):
 
 class Product(models.Model):
     id = models.AutoField(primary_key=True)
+    smiles = models.TextField(blank=True, null=True)
     name = models.CharField(max_length=100)
     quantity = models.DecimalField(
         max_digits=10, decimal_places=3, help_text="Quantity available in g"
@@ -59,6 +60,13 @@ class Product(models.Model):
     )
     creation_date = models.DateTimeField(auto_now_add=True)
     update_date = models.DateTimeField(auto_now=True)
+    favorites = models.ManyToManyField(User, related_name="favorite_products", blank=True)
+
+    # Check if a product is favorite of the current user
+    def is_favorite(self, user):
+        if not user:
+            return False
+        return self.favorites.filter(id=user.id).exists()
 
     def __str__(self):
         return f"{self.name} ({self.cas_number})"
@@ -66,3 +74,19 @@ class Product(models.Model):
     # Get the laboratory of a specific product
     def get_laboratory(self):
         return self.location.lab
+    
+    def serialize(self, user):
+        return {
+            'id': self.id,
+            'smiles': self.smiles,
+            'name': self.name,
+            'quantity': str(self.quantity).rstrip("0").rstrip("."),
+            'purity': self.purity,
+            'cas': self.cas_number,
+            'producer': self.producer,
+            'lab': self.location.lab.lab_number, 
+            'box': self.location.box_number, 
+            'creationDate': self.creation_date,
+            'updateDate': self.update_date,
+            'isFavorite': self.is_favorite(user)
+        }

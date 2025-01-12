@@ -1,3 +1,7 @@
+import { deleteProduct, favoriteProduct } from "./api.js";
+
+// -----------------------------------------------------------general helper functions
+
 // Create a bootstrap alert and append it to the alert container to dislay it using bootstrap classes.
 // take 2 arguments: message, and type of the alert (default: success)
 export function showAlert(message, type="success") {
@@ -26,7 +30,7 @@ export function showAlert(message, type="success") {
 }
 
 // Function to get cookies (for csrf validation)
-function getCookie(name) {
+export function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
         const cookies = document.cookie.split(';');
@@ -51,4 +55,49 @@ export function allFilled (inputs) {
     return false
 }
 
-// ----------------Builder functions
+// -------------------------------------------------------------------Element Builder functions
+
+// Function to build row for the table displaying products
+export function createRow(product){
+    let newRow = document.createElement('tr');
+    newRow.innerHTML = `
+            <td data-idPdt=${product.id}>${product.name}</th>
+            <td>${product.cas}</td>
+            <td>${product.quantity} g</td>
+            <td>${product.purity}%</td>
+            <td>${product.lab} / Box: ${product.box}</td>
+            <td class='actions'> 
+                <button class="btn p-0 like-button text-warning favorite"><i class="bi bi-star${product.isFavorite? '-fill' : ''}"></i></button> 
+                <button class="btn p-0 like-button text-danger delete"><i class="bi bi-trash"></i></button>
+            </td>
+    `
+    const favoriteButton = newRow.querySelector('.favorite');
+    const deleteButton = newRow.querySelector('.delete');
+
+    // add the event listener to the delete button
+    deleteButton.addEventListener('click', async () => {
+        try {
+            deleteProduct(product.id);
+            newRow.remove();
+        } catch {
+            showAlert('Product could not have been removed', 'danger');
+        }
+    });
+
+    // add the event listener to the favorite button
+    favoriteButton.addEventListener('click', async (event) => {
+
+        const confirmation = await favoriteProduct(product.id);
+        
+        // Change the icon if clicked
+        if (confirmation.action == "favorite"){
+            favoriteButton.querySelector('i').classList.remove('bi-star');
+            favoriteButton.querySelector('i').classList.add('bi-star-fill');
+        } else if (confirmation.action == "unfavorite") {
+            favoriteButton.querySelector('i').classList.add('bi-star');
+            favoriteButton.querySelector('i').classList.remove('bi-star-fill');
+        }
+    });
+
+    return newRow
+}

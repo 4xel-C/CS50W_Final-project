@@ -15,7 +15,7 @@ function createTotalRow(total){
     let totalRow = document.createElement('tr');
     totalRow.classList.add('table-active');
     totalRow.innerHTML = `
-        <th scope="row">Total</th>
+        <th scope="row">Total on site</th>
         <td>${total}</td>
     `
     return totalRow;

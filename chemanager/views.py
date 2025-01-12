@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
 from django.http import HttpResponseRedirect, JsonResponse
@@ -7,6 +8,7 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from .models import User, Laboratory
+from .helpers import query_products
 
 
 # index view
@@ -104,11 +106,23 @@ def register(request):
 
 
 # inventory view
+@login_required
 def inventory(request):
-    return render(request, "chemanager/inventory.html")
+    user = request.user
+
+    # get the laboratory id of the current user
+    try:
+        lab_id = user.laboratory.id
+    except AttributeError:
+        lab_id = None
+
+    return render(request, "chemanager/inventory.html", {
+        'labId': lab_id
+    })
 
 
 # register view
+@login_required
 def add_product(request):
     return render(request, "chemanager/add.html")
 
@@ -139,3 +153,66 @@ def site(request):
 
     else:
         return JsonResponse({"error": "Bad request"}, status=400)
+
+
+def products(request, id=None):
+    """
+    Request the database to fetch products list:
+
+    URL: /products/<int:id>
+    Method GET: Fetch all products, accept an id to fetch information on a specific product
+
+    URL: /products/laboratory/<int:id>
+    Method GET: Fetch all products, accept an id to fetch information on a specific product
+    """
+
+    # Check authentifiation
+    user = request.user
+    path = request.path
+
+    if not user.is_authenticated:
+        return JsonResponse({"error": "Authentification required"}, status=401)
+
+    if request.method == "GET":
+        try:
+            products = query_products(path)
+        except ObjectDoesNotExist:
+            return JsonResponse({"error": "Ressource not found"}, status=404)
+
+        # serialize the products and store it into response variable
+        response = [product.serialize(user) for product in products]
+
+        return JsonResponse({'products': response}, status=200)
+    
+    # Delete method to delete a specific product
+    elif request.method == "DELETE":
+        try:
+            product = query_products(id=id)
+        except ObjectDoesNotExist:
+            return JsonResponse({"error": "Ressource not found"}, status=404)
+        product.delete()
+
+        return JsonResponse({"message": "Prodcut deleted successfully"}, status=200)
+    
+    # Tag a product as a 'favorite' for the user if not already a favorite, otherwise, remove from the favorite list
+    elif request.method == "PUT" and "favorite" in path:
+        try:
+            product = query_products(id=id)
+        except ObjectDoesNotExist:
+            return JsonResponse({"error": "Ressource not found"}, status=404)
+        
+        if product.is_favorite(user):
+            product.favorites.remove(user)
+            return JsonResponse({"message": "Product removed from favorite", "action": "unfavorite"}, status=200)
+        else:
+            product.favorites.add(user)
+            return JsonResponse({"message": "Product add to favorite", "action": "favorite"}, status=200)
+
+
+        
+
+
+
+        
+
+        
