@@ -29,7 +29,6 @@ def login_view(request):
     Render the login view and log in the user through a POST method
     """
     if request.method == "POST":
-
         # get the user informations and try an authentification
         username = request.POST["username"]
         password = request.POST["password"]
@@ -96,7 +95,6 @@ def register(request):
 
     # If GET method, display the page
     if request.method == "GET":
-
         # get the laboratory for the form
         laboratories = Laboratory.objects.all()
 
@@ -104,6 +102,13 @@ def register(request):
             request, "chemanager/register.html", {"laboratories": laboratories}
         )
 
+# View to display and edit user's informations account
+@login_required
+def account(request):
+    
+    # get the user information
+    user = request.user
+    return render(request, "chemanager/account.html")
 
 # inventory view
 @login_required
@@ -120,17 +125,16 @@ def inventory(request, id=None):
             lab_id = user.laboratory.id
         except AttributeError:
             lab_id = ""
-    
+
     # get the number of the laboratory
     try:
         lab_number = Laboratory.objects.get(id=id).lab_number
     except ObjectDoesNotExist:
         lab_number = ""
 
-    return render(request, "chemanager/inventory.html", {
-        'labId': lab_id,
-        'labNumber': lab_number
-    })
+    return render(
+        request, "chemanager/inventory.html", {"labId": lab_id, "labNumber": lab_number}
+    )
 
 
 # register view
@@ -150,7 +154,6 @@ def site(request):
     Authentication not required
     """
     if request.method == "GET":
-
         # get the labs
         labs = Laboratory.objects.all().order_by("lab_number")
 
@@ -173,6 +176,7 @@ def products(request, id=None):
 
     URL: /products/<int:id>
     Method GET: Fetch all products, accept an id to fetch information on a specific product
+    Method DELETE: Delete the corresponding product
 
     URL: /products/laboratory/<int:id>
     Method GET: Fetch all products, accept an id to fetch information on a specific product
@@ -195,8 +199,8 @@ def products(request, id=None):
         # serialize the products and store it into response variable
         response = [product.serialize(user) for product in products]
 
-        return JsonResponse({'products': response}, status=200)
-    
+        return JsonResponse({"products": response}, status=200)
+
     # Delete method to delete a specific product
     elif request.method == "DELETE":
         try:
@@ -206,34 +210,32 @@ def products(request, id=None):
         product.delete()
 
         return JsonResponse({"message": "Prodcut deleted successfully"}, status=200)
-    
+
     # Edit a product (location, purity, name, ...) or add a product to favorite
     elif request.method == "PUT":
-
         # if favorite in path: tag the product as a 'favorite'
         if "favorite" in path:
             try:
                 product = query_products(path=path, id=id)[0]
             except ObjectDoesNotExist:
                 return JsonResponse({"error": "Ressource not found"}, status=404)
-            
+
             if product.is_favorite(user):
                 product.favorites.remove(user)
-                return JsonResponse({"message": "Product removed from favorite", "action": "unfavorite"}, status=200)
+                return JsonResponse(
+                    {
+                        "message": "Product removed from favorite",
+                        "action": "unfavorite",
+                    },
+                    status=200,
+                )
             else:
                 product.favorites.add(user)
-                return JsonResponse({"message": "Product add to favorite", "action": "favorite"}, status=200)
-        
+                return JsonResponse(
+                    {"message": "Product add to favorite", "action": "favorite"},
+                    status=200,
+                )
+
         # update a product
         else:
             pass
-
-
-
-        
-
-
-
-        
-
-        

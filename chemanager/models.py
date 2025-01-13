@@ -60,7 +60,9 @@ class Product(models.Model):
     )
     creation_date = models.DateTimeField(auto_now_add=True)
     update_date = models.DateTimeField(auto_now=True)
-    favorites = models.ManyToManyField(User, related_name="favorite_products", blank=True)
+    favorites = models.ManyToManyField(
+        User, related_name="favorite_products", blank=True
+    )
 
     # Check if a product is favorite of the current user
     def is_favorite(self, user):
@@ -74,19 +76,19 @@ class Product(models.Model):
     # Get the laboratory of a specific product
     def get_laboratory(self):
         return self.location.lab
-    
+
     def serialize(self, user):
         return {
-            'id': self.id,
-            'smiles': self.smiles,
-            'name': self.name,
-            'quantity': str(self.quantity).rstrip("0").rstrip("."),
-            'purity': self.purity,
-            'cas': self.cas_number,
-            'producer': self.producer,
-            'lab': self.location.lab.lab_number, 
-            'box': self.location.box_number, 
-            'creationDate': self.creation_date,
-            'updateDate': self.update_date,
-            'isFavorite': self.is_favorite(user)
+            "id": self.id,
+            "smiles": self.smiles,
+            "name": self.name,
+            "quantity": str(self.quantity).rstrip("0").rstrip("."),
+            "purity": self.purity,
+            "cas": self.cas_number,
+            "producer": self.producer,
+            "lab": self.location.lab.lab_number,
+            "box": self.location.box_number,
+            "creationDate": self.creation_date,
+            "updateDate": self.update_date,
+            "isFavorite": self.is_favorite(user),
         }

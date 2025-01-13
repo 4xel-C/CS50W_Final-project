@@ -6,6 +6,7 @@ urlpatterns = [
     path("", views.index, name="index"),
     path("login", views.login_view, name="login"),
     path("logout", views.logout_view, name="logout"),
+    path("account", views.account, name="account"),
     path("register", views.register, name="register"),
     path("inventory", views.inventory, name="inventory"),
     path("inventory/mylab", views.inventory, name="mylab"),

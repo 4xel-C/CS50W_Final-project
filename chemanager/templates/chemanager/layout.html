@@ -36,6 +36,7 @@
                     </li>
                     <li class="nav-item"><a class="nav-link {% if 'watchlist' in request.path %} active {% endif %}" href="{% url 'watchlist' %}">Watchlist</a></li>
                     <li class="nav-item"><a class="nav-link {% if 'analysis' in request.path %} active {% endif %}" href="">Analysis Tool</a></li>
+                    <li class="nav-item"><a class="nav-link {% if 'account' in request.path %} active {% endif %}" href="{% url 'account' %}">Account</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Log Out</a></li>
                 </ul>
                 <form class="d-flex" role="search" action="/inventory" method="get">
