@@ -108,7 +108,9 @@ def account(request):
     
     # get the user information
     user = request.user
-    return render(request, "chemanager/account.html")
+    return render(request, "chemanager/account.html", {
+        'user': user
+    })
 
 # inventory view
 @login_required

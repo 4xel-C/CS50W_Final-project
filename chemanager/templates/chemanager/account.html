@@ -2,11 +2,27 @@
 {% load static %}
 
 {% block body %}
-<div class="container">
-    <h1 class="page-title">My account: logged as </h1>
+<div class="container mb-5">
+    <h1 class="page-title">logged as {{ user }}</h1>
 </div>
 
-<div class="container align-items-center">
+
+<div class="container col-xl-5">
+  <dl class="row justify-content-center border">
+    
+    <dt class="col-lg-3">Username</dt>
+    <dd class="col-lg-9">{{ user }}</dd>
+  
+    <dt class="col-lg-3">Laboratory Number:</dt>
+    <dd class="col-lg-9">LAB</dd>
+  
+    <dt class="col-lg-3">Another term</dt>
+    <dd class="col-lg-9">This definition is short, so no extra paragraphs or anything.</dd>
+  
+    <dt class="col-lg-3 text-truncate">Truncated term is truncated</dt>
+    <dd class="col-lg-9">This can be useful when space is tight. Adds an ellipsis at the end.</dd>
+
+  </dl>
 </div>
 
 {% endblock %}
