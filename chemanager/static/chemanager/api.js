@@ -1,5 +1,40 @@
 import { getCookie } from "./helpers.js";
 
+// ----------------------------------------------------------API for USER management
+
+// Edit a user information using a put method
+export async function editUser(updatedData){
+
+    const csrfToken = getCookie('csrftoken');
+
+    try {
+        // try to fetch the data
+        const response = await fetch(`user/edit`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify(updatedData)
+        });
+
+        
+        // Fetching error handling
+        if (!response.ok){
+            const errorData = await response.json();
+            throw new Error(`HTTP error : ${response.status}, Message : ${errorData.error || 'Unknown Error'}`);
+        }
+
+        const confirmation = await response.json();
+        return confirmation;
+
+    } catch(error) {
+        throw error;
+    }
+}
+
+// --------------------------------------------------------API for products
+
 // Fetch the informations containing all laboratories on site with the count of products in each lab
 export async function fetchSite(){
 
@@ -145,5 +180,4 @@ export async function editProduct(id, updatedData){
     } catch(error) {
         throw error;
     }
-
 }

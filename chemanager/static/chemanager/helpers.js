@@ -26,7 +26,7 @@ export function showAlert(message, type="success") {
         alert.classList.remove("show");
         alert.classList.add("fade");
         setTimeout(() => alert.remove(), 500);
-    }, 2000);
+    }, 4000);
 }
 
 // Function to get cookies (for csrf validation)

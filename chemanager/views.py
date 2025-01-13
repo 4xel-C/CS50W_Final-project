@@ -6,6 +6,7 @@ from django.db import IntegrityError
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
+import json
 
 from .models import User, Laboratory
 from .helpers import query_products
@@ -102,15 +103,28 @@ def register(request):
             request, "chemanager/register.html", {"laboratories": laboratories}
         )
 
+
 # View to display and edit user's informations account
 @login_required
 def account(request):
-    
     # get the user information
     user = request.user
-    return render(request, "chemanager/account.html", {
-        'user': user
-    })
+
+    # get the laboratory of the user
+    user_lab = user.laboratory
+
+    if user_lab:
+        user_lab = user_lab.lab_number
+
+    # get all laboratory
+    labs = Laboratory.objects.all()
+
+    return render(
+        request,
+        "chemanager/account.html",
+        {"user": user, "userLab": user_lab, "labs": labs},
+    )
+
 
 # inventory view
 @login_required
@@ -234,10 +248,63 @@ def products(request, id=None):
             else:
                 product.favorites.add(user)
                 return JsonResponse(
-                    {"message": "Product add to favorite", "action": "favorite"},
+                    {"message": "Product added to favorite", "action": "favorite"},
                     status=200,
                 )
 
         # update a product
         else:
             pass
+
+
+def edit_user(request):
+    """
+    API view to edit a user informations
+
+    url: "user/edit"
+    method = "PUT"
+    body = key = {username, labNumber, email}
+    """
+    user = request.user
+
+    if not user.is_authenticated:
+        return JsonResponse({"error": "Need authentication"})
+
+    if request.method == "PUT":
+        # fetch the data from the body
+        data = json.loads(request.body)
+        username = data.get("username", user.username)
+        lab_number = data.get("labNumber", user.laboratory)
+        email = data.get("email", user.email)
+
+        # check email and username:
+        if not email or not username:
+            return JsonResponse(
+                {"error": "Missing required field: email or username"}, status=400
+            )
+
+        # get the laboratory instance
+        if lab_number == "":
+            laboratory = None
+        else:
+            try:
+                laboratory = Laboratory.objects.get(lab_number=lab_number)
+            except ObjectDoesNotExist:
+                return JsonResponse(
+                    {"error": "The laboratory you choose does not exist"}, status=404
+                )
+
+        # try to update the database
+        try:
+            user.username = username
+            user.laboratory = laboratory
+            user.email = email
+            user.save()
+            return JsonResponse(
+                {"message": "User information successfully updated."}, status=200
+            )
+
+        except IntegrityError:
+            return JsonResponse({"error": "Username already taken"}, status=409)
+
+    return JsonResponse({"error": "Bad request"}, status=400)

@@ -2,31 +2,54 @@
 {% load static %}
 
 {% block body %}
-<div class="container mb-5">
-    <h1 class="page-title">logged as {{ user }}</h1>
+<div class="container mb-4">
+    <h1 class="page-title">logged as <span id="usernameTitle">{{ user }}</span></h1>
 </div>
 
 
-<div class="container col-xl-5">
-  <dl class="row justify-content-center border">
+  <div class="container col-lg-5">
+    <dl class="row justify-content-center border border-primary p-2">
+      
+      <dt class="col-6">Username</dt>
+      <dd class="col-6"> 
+        <textarea class="form-control edit-area" hidden rows="1">{{ user }}</textarea> 
+        <div class="info">{{ user }}</div>
+      </dd>
     
-    <dt class="col-lg-3">Username</dt>
-    <dd class="col-lg-9">{{ user }}</dd>
-  
-    <dt class="col-lg-3">Laboratory Number:</dt>
-    <dd class="col-lg-9">LAB</dd>
-  
-    <dt class="col-lg-3">Another term</dt>
-    <dd class="col-lg-9">This definition is short, so no extra paragraphs or anything.</dd>
-  
-    <dt class="col-lg-3 text-truncate">Truncated term is truncated</dt>
-    <dd class="col-lg-9">This can be useful when space is tight. Adds an ellipsis at the end.</dd>
+      <dt class="col-6">Laboratory Number:</dt>
+      <dd class="col-6">
+        <select class="form-control edit-area" hidden>
+          <option value="" {% if not lab %} selected {% endif %}>No laboratory</option>
+          {% for lab in labs %}
+          <option value="{{ lab.lab_number }}" {% if userLab == lab.lab_number %}selected{% endif %}>{{ lab.lab_number }}</option>
+          {% endfor %}
 
-  </dl>
-</div>
+        </select> 
+        <div class="info">{% if userLab %}{{ userLab }}{% else %} No laboratory {% endif %}</div>
+      </dd>
+    
+      <dt class="col-6">Email adress</dt>
+      <dd class="col-6">
+        <textarea class="form-control edit-area" hidden rows="1">{{ user.email }}</textarea>
+        <div class="info">{{ user.email }}</div>
+      </dd>
+ 
+    </dl>
+
+    <div class="row justify-content-center">
+      <div class="col-md-5 mb-2 d-flex justify-content-evenly">
+              <button type="submit" class="btn btn-primary w-100 edit-buttons" id="editButton">Edit data</button>
+              <button type="submit" class="btn btn-success edit-buttons" id="confirmButton" hidden><i class="bi bi-check-lg"></i></button>
+              <button type="submit" class="btn btn-danger edit-buttons" id="cancelButton" hidden><i class="bi bi-x-lg"></i></button>
+      </div>
+      <div class="col-md-5 mb-2">
+        <button type="submit" class="btn btn-primary w-100" id="changePassword">Change password</button>
+      </div>
+    </div>
+  </div>
 
 {% endblock %}
 
 {% block script %}
-<script type="module" src="{% static 'chemanager/index.js' %}"></script>
+<script type="module" src="{% static 'chemanager/account.js' %}"></script>
 {% endblock %}

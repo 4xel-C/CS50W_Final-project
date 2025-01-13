@@ -15,10 +15,14 @@ urlpatterns = [
     path("watchlist", views.inventory, name="watchlist"),
 
     # API URLs
+    # Products
     path("site", views.site, name="site"),
     path("products", views.products, name="products"),
     path("products/<int:id>", views.products, name="product_Id"),
     path("products/<int:id>/favorite", views.products, name="product_Id"),
     path("products/laboratory/<int:id>", views.products, name="lab_products"),
-    path("products/watchlist", views.products, name="fetch_watchlist")
+    path("products/watchlist", views.products, name="fetch_watchlist"),
+
+    # user
+    path("user/edit", views.edit_user, name="edit_user")
 ]
