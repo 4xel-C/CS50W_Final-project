@@ -334,7 +334,7 @@ def change_password(request):
             return JsonResponse({"error": "Please enter a correct password"}, status=400)
         
         user.set_password(password)
-        user.save
+        user.save()
         
         # update session to keep the user logged in
         update_session_auth_hash(request, user)
