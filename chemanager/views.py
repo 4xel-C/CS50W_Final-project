@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
@@ -261,7 +261,7 @@ def edit_user(request):
     """
     API view to edit a user informations
 
-    url: "user/edit"
+    url: "user/me"
     method = "PUT"
     body = key = {username, labNumber, email}
     """
@@ -307,4 +307,40 @@ def edit_user(request):
         except IntegrityError:
             return JsonResponse({"error": "Username already taken"}, status=409)
 
+    return JsonResponse({"error": "Bad request"}, status=400)
+
+def change_password(request):
+    """
+    API view to edit a user informations
+
+    url: "user/me"
+    method = "PATCH"
+    body = key = {password, confirmation}
+    """
+    user = request.user
+
+    if not user.is_authenticated:
+        return JsonResponse({"error": "Need authentication"})
+    
+    if request.method == 'PATCH':
+        # fetch the data from the body
+        data = json.loads(request.body)
+        password = data.get("password", "")
+        old_password = data.get("oldPassword", "")
+        
+        if user.check_password(old_password):
+            return JsonResponse({"error": "Wrong old password"}, status=400)
+        elif password == "":
+            return JsonResponse({"error": "Please enter a correct password"}, status=400)
+        
+        user.set_password(password)
+        user.save
+        
+        # update session to keep the user logged in
+        update_session_auth_hash(request, user)
+        
+        return JsonResponse(
+                {"message": "Password successfully updated."}, status=200
+            )
+    
     return JsonResponse({"error": "Bad request"}, status=400)

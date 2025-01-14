@@ -24,5 +24,6 @@ urlpatterns = [
     path("products/watchlist", views.products, name="fetch_watchlist"),
 
     # user
-    path("user/edit", views.edit_user, name="edit_user")
+    path("user/me", views.edit_user, name="edit_user"),
+    path("user/me/password", views.change_password, name="change_password")
 ]

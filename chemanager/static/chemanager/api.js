@@ -9,7 +9,7 @@ export async function editUser(updatedData){
 
     try {
         // try to fetch the data
-        const response = await fetch(`user/edit`, {
+        const response = await fetch(`user/me`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
