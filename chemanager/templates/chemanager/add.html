@@ -1,16 +1,18 @@
 {% extends "chemanager/layout.html" %}
+{% load static %}
 
 {% block body %}
 <div class="container">
     <h1 class="page-title">Add a new compound</h1>
 </div>
 
-<div class="container stats">
-
+<div class="container">
+    <div id="JSME" code="JME.class" name="JME" archive="JME.jar" width="360" height="315" id="JME">
 </div>
 
 
 {% endblock %}
 
 {% block script %}
+<script type="module" src="{% static 'chemanager/add.js' %}"></script>
 {% endblock %}

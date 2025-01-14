@@ -309,6 +309,7 @@ def edit_user(request):
 
     return JsonResponse({"error": "Bad request"}, status=400)
 
+
 def change_password(request):
     """
     API view to edit a user informations
@@ -321,27 +322,27 @@ def change_password(request):
 
     if not user.is_authenticated:
         return JsonResponse({"error": "Need authentication"})
-    
-    if request.method == 'PATCH':
+
+    if request.method == "PATCH":
         # fetch the data from the body
         data = json.loads(request.body)
         password = data.get("newPassword", "")
         old_password = data.get("currentPassword", "")
-        
+
         if not user.check_password(old_password):
             return JsonResponse({"error": "Wrong old password"}, status=400)
         elif password == "":
-            return JsonResponse({"error": "Please enter a correct password"}, status=400)
-        
+            return JsonResponse(
+                {"error": "Please enter a correct password"}, status=400
+            )
+
         user.set_password(password)
         user.save()
-        
+
         # update session to keep the user logged in
         update_session_auth_hash(request, user)
-        
-        return JsonResponse(
-                {"message": "Password successfully updated."}, status=200
-            )
-        
+
+        return JsonResponse({"message": "Password successfully updated."}, status=200)
+
     else:
         return JsonResponse({"error": "Bad request"}, status=400)
