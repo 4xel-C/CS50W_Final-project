@@ -43,7 +43,37 @@
               <button type="submit" class="btn btn-danger edit-buttons" id="cancelButton" hidden><i class="bi bi-x-lg"></i></button>
       </div>
       <div class="col-md-5 mb-2">
-        <button type="submit" class="btn btn-primary w-100" id="changePassword">Change password</button>
+        <button type="button" class="btn btn-primary w-100" id="changePassword" data-bs-toggle="modal" data-bs-target="#passwordModal">Change password</button>
+      </div>
+    </div>
+
+    <!-- Modal for password change form -->
+    <div class="modal fade" id="passwordModal" tabindex="-1" aria-labelledby="changePasswordModal" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Change password</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-2">
+              <label for="old-password" class="col-form-label">Your current password:</label>
+              <input type="password" class="form-control passwordInput" id="old-password">
+            </div>
+            <div class="mb-2">
+              <label for="new-password" class="col-form-label">New password:</label>
+              <input type="password" class="form-control passwordInput" id="new-password">
+            </div>
+            <div class="mb-2">
+              <label for="confirmation-password" class="col-form-label">Confirm your new password:</label>
+              <input type="password" class="form-control passwordInput" id="confirmation-password">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" id="submitPasswordButton">Change password</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>

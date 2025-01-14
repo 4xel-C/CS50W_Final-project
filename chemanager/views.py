@@ -325,10 +325,10 @@ def change_password(request):
     if request.method == 'PATCH':
         # fetch the data from the body
         data = json.loads(request.body)
-        password = data.get("password", "")
-        old_password = data.get("oldPassword", "")
+        password = data.get("newPassword", "")
+        old_password = data.get("currentPassword", "")
         
-        if user.check_password(old_password):
+        if not user.check_password(old_password):
             return JsonResponse({"error": "Wrong old password"}, status=400)
         elif password == "":
             return JsonResponse({"error": "Please enter a correct password"}, status=400)
@@ -342,5 +342,6 @@ def change_password(request):
         return JsonResponse(
                 {"message": "Password successfully updated."}, status=200
             )
-    
-    return JsonResponse({"error": "Bad request"}, status=400)
+        
+    else:
+        return JsonResponse({"error": "Bad request"}, status=400)

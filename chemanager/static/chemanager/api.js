@@ -33,6 +33,36 @@ export async function editUser(updatedData){
     }
 }
 
+// Change the user password using a PATCH method
+export async function changePassword(passwordsData){
+
+    const csrfToken = getCookie('csrftoken');
+
+    try {
+        // try to fetch the data
+        const response = await fetch(`user/me/password`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify(passwordsData)
+        });
+
+        // Fetching error handling
+        if (!response.ok){
+            const errorData = await response.json();
+            throw new Error(`HTTP error : ${response.status}, Message : ${errorData.error || 'Unknown Error'}`);
+        }
+
+        const confirmation = await response.json();
+        return confirmation;
+
+    } catch(error) {
+        throw error;
+    }
+}
+
 // --------------------------------------------------------API for products
 
 // Fetch the informations containing all laboratories on site with the count of products in each lab
