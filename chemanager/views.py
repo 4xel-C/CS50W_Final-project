@@ -114,15 +114,16 @@ def account(request):
     user_lab = user.laboratory
 
     if user_lab:
-        user_lab = user_lab.lab_number
+        user_lab_number = user_lab.lab_number
 
-    # get all laboratory
+    # get all laboratory and all boxes
     labs = Laboratory.objects.all()
+    boxes = user_lab.boxes.all()
 
     return render(
         request,
         "chemanager/account.html",
-        {"user": user, "userLab": user_lab, "labs": labs},
+        {"user": user, "userLab": user_lab_number, "labs": labs, "boxes": boxes},
     )
 
 

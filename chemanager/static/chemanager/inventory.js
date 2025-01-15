@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // ------------------------------ Sort by name functions
     let ascendingName = false;
     sortName.addEventListener('click', () => {
-        products.sort((a, b) => ascendingName ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name));
+        products.sort((a, b) => ascendingName ? a?.name?.localeCompare(b.name) : b?.name?.localeCompare(a.name));
         ascendingName = !ascendingName;
         sortName.classList.toggle('bi-sort-alpha-down', !ascendingName);
         sortName.classList.toggle('bi-sort-alpha-up', ascendingName);
@@ -78,11 +78,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         products.sort((a, b) => {
 
             // Compare labs first
-            const labComparison = ascendingLab ? a.lab.localeCompare(b.lab) : b.lab.localeCompare(a.lab);
+            const labComparison = ascendingLab ? a?.lab?.localeCompare(b.lab) : b?.lab?.localeCompare(a.lab);
     
             // If labs are the same, compare boxes
             if (labComparison === 0) {
-                return ascendingLab ? a.box.localeCompare(b.box) : b.box.localeCompare(a.box);
+                return ascendingLab ? a?.box?.localeCompare(b.box) : b?.box?.localeCompare(a.box);
             }
             return labComparison;
         });
@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', async () => {
        // ------------------------------ Sort by CAS functions
     let ascendingCas = false;
     sortCas.addEventListener('click', () => {
-        products.sort((a, b) => ascendingCas ? a.cas.localeCompare(b.cas) : b.cas.localeCompare(a.cas));
+        products.sort((a, b) => ascendingCas ? a?.cas?.localeCompare(b.cas) : b?.cas?.localeCompare(a.cas));
         ascendingCas = !ascendingCas;
         sortCas.classList.toggle('bi-sort-alpha-down', !ascendingCas);
         sortCas.classList.toggle('bi-sort-alpha-up', ascendingCas);
