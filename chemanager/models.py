@@ -45,7 +45,7 @@ class User(AbstractUser):
 
 class Product(models.Model):
     id = models.AutoField(primary_key=True)
-    smiles = models.TextField(blank=True, null=True)
+    smile = models.TextField(blank=True, null=True)
     name = models.CharField(max_length=100)
     quantity = models.DecimalField(
         max_digits=10, decimal_places=3, help_text="Quantity available in g"
@@ -80,7 +80,7 @@ class Product(models.Model):
     def serialize(self, user):
         return {
             "id": self.id,
-            "smiles": self.smiles,
+            "smiles": self.smile,
             "name": self.name,
             "quantity": str(self.quantity).rstrip("0").rstrip("."),
             "purity": self.purity,

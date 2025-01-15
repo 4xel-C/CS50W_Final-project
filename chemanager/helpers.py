@@ -1,5 +1,6 @@
 from django.core.exceptions import ObjectDoesNotExist
 from .models import Product
+import re
 
 def query_products(path="/products", user=None, id=None, key_word=None):
     """
@@ -25,6 +26,16 @@ def query_products(path="/products", user=None, id=None, key_word=None):
         raise ObjectDoesNotExist
             
     return products
+
+def is_valid_cas(cas):
+    # Regular expression to detect a CAS number
+    pattern = r'^\d{2,7}-\d{2}-\d$'
+    match = re.match(pattern, cas)
+    
+    if match:
+        return True
+    else:
+        return False
  
     
 

@@ -8,8 +8,8 @@ from django.shortcuts import render
 from django.urls import reverse
 import json
 
-from .models import User, Laboratory
-from .helpers import query_products
+from .models import User, Laboratory, Product
+from .helpers import query_products, is_valid_cas
 
 
 # index view
@@ -156,19 +156,16 @@ def inventory(request, id=None):
 # register view
 @login_required
 def add_product(request):
-    
     user = request.user
     user_lab = user.laboratory
-    
+
     # Recuperate all the boxes available in the laboratory
     if user_lab:
         boxes = user_lab.boxes.all()
-    
-    return render(request, "chemanager/add.html", {
-        'user': user, 
-        'lab': user_lab,
-        'boxes': boxes
-    })
+
+    return render(
+        request, "chemanager/add.html", {"user": user, "lab": user_lab, "boxes": boxes}
+    )
 
 
 # -----------------------------------------------------------API Views
@@ -269,7 +266,7 @@ def create_compound(request):
     """Api route to create a new compound/
     URL: "products/create"
     Methode: "POST"
-    Body: name, cas, smile, producer, quantity, purity, purity, lab, box
+    Body: name, cas, smile, producer, quantity, purity, laboratory, box
     """
     # check authentification
     user = request.user
@@ -278,16 +275,69 @@ def create_compound(request):
         return JsonResponse({"error": "Need authentication"})
 
     if request.method == "POST":
-        
         # fetch the data from the body
         data = json.loads(request.body)
-        print(data)
+
+        # control data => Set to none empty string
+        for key in data:
+            if data[key].strip() == "":
+                data[key] = None
+
+        # control quantity and purity
+        try:
+            data["quantity"] = float(data["quantity"])
+            data["purity"] = float(data["purity"])
+
+            if data["quantity"] <= 0 or data["purity"] <= 0:
+                raise ValueError
+
+            # Ensure the number as 3 decimal max for the quantity and 1 for the purity
+            data["quantity"] = round(data["quantity"], 3)
+            data["purity"] = round(data["purity"], 1)
+
+        except (TypeError, ValueError):
+            return JsonResponse(
+                {"error": "Quantity or Purity must be a postive number"}, status=400
+            )
+
+        # control CAS:
+        if data["cas"] and not is_valid_cas(data["cas"]):
+            return JsonResponse(
+                {"error": "The CAS you entered is invalid"}, status=400
+            )
+
+        try:
+            # Get the box and laboratory and the box
+            laboratory = Laboratory.objects.get(lab_number=data["laboratory"])
+            box = laboratory.boxes.get(box_number=data["box"])
+
+        except ObjectDoesNotExist:
+            return JsonResponse(
+                {"error": "The location you entered does not exist"}, status=400
+            )
+
+        # Create the new product in the data base:
+        product = Product.objects.create(
+            name=data["name"],
+            quantity=data["quantity"],
+            purity=data["purity"],
+            cas_number=data["cas"],
+            location=box,
+            producer=data["producer"],
+            smile=data["smile"],
+        )
+        product.save()
+        return JsonResponse(
+                    {"message": "Product successfully created"},
+                    status=200,
+                )
 
     else:
         return JsonResponse({"error": "Bad request"}, status=400)
 
 
 # ------------------------------------User API
+
 
 def edit_user(request):
     """
