@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // fetch data
     const data = await fetchProducts(labId);
 
-    // get the GET parameter for the search function and filter the datas if present
+    // SEARCH FUNCTION get the GET parameter for the search function and filter the datas if present
     const query = new URLSearchParams(window.location.search).get('q');
     let products = [];
 

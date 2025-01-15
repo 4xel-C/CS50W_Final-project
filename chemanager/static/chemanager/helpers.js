@@ -60,7 +60,7 @@ export function filterData(products, query){
     let productsFiltered = []
     
     products.forEach(product => {
-        if (product.name.includes(query) || product.cas.includes(query) || product.lab.includes(query)) {
+        if (product?.name?.toLowerCase().includes(query.toLowerCase()) || product?.cas?.includes(query) || product?.lab?.toLowerCase().includes(query.toLowerCase())) {
             productsFiltered.push(product);
         }
     });
@@ -72,9 +72,10 @@ export function filterData(products, query){
 // Function to build row for the table displaying products
 export function createRow(product){
     let newRow = document.createElement('tr');
+
     newRow.innerHTML = `
             <td data-idPdt=${product.id}>${product.name}</th>
-            <td>${product.cas}</td>
+            <td>${product.cas ? product.cas: '/'}</td>
             <td>${product.quantity} g</td>
             <td>${product.purity}%</td>
             <td>${product.lab} / Box: ${product.box}</td>
