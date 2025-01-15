@@ -4,29 +4,38 @@ import { showAlert } from "./helpers.js";
 document.addEventListener('DOMContentLoaded', () => {
 
     // Create query selectors
+    const inputName = document.querySelector('#inputName');
+    const inputCas = document.querySelector('#inputCas');
+    const inputSmile = document.querySelector('#inputSmile');
+    const inputProducer = document.querySelector('#inputProducer');
+    const inputQuantity = document.querySelector('#inputQuantity');
+    const inputPurity = document.querySelector('#inputPurity');
     const locationInput = document.querySelector('#inputLocation');
     const submitButton = document.querySelector('.submitButton')
-
-    // Create grouped queryselectors for inputs
-    const inputs = document.querySelectorAll('input');
+    
 
     // Create event listener for the submit button
     submitButton.addEventListener('click', async () => {
 
         let data = {
-            'name': inputs[0].value,
-            'cas': inputs[1].value,
-            'smile': inputs[2].value,
-            'producer': inputs[3].value,
-            'quantity': inputs[4].value,
-            'purity': inputs[5].value,
+            'name': inputName.value,
+            'cas': inputCas.value,
+            'smile': inputSmile.value,
+            'producer': inputProducer.value,
+            'quantity': inputQuantity.value,
+            'purity': inputPurity.value,
             'laboratory': locationInput.dataset.laboratory,
             'box': locationInput.value
         }
+        
 
         // Checking if mandatory input are all filled
         const keysToCheck = ['name', 'producer', 'quantity', 'purity', 'laboratory', 'box']
         const hasNull = keysToCheck.some(key => data[key] === null || data[key] === undefined || data[key] === '');
+        
+        Object.keys(data).forEach(key => {
+            console.log(key + ":" + data[key])
+        });
 
         if (hasNull){
             showAlert('Missing informations!', 'danger');

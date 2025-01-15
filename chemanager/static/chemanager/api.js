@@ -189,7 +189,7 @@ export async function editProduct(id, updatedData){
 
     try {
         // try to fetch the data
-        const response = await fetch(`products/${id}`, {
+        const response = await fetch(`/products/${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -219,7 +219,7 @@ export async function createProduct(data){
     
     try {
         // send the data to the server to create a new product
-        const response = await fetch(`products/create`, {
+        const response = await fetch(`/products/create`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
