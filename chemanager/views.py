@@ -156,7 +156,19 @@ def inventory(request, id=None):
 # register view
 @login_required
 def add_product(request):
-    return render(request, "chemanager/add.html")
+    
+    user = request.user
+    user_lab = user.laboratory
+    
+    # Recuperate all the boxes available in the laboratory
+    if user_lab:
+        boxes = user_lab.boxes.all()
+    
+    return render(request, "chemanager/add.html", {
+        'user': user, 
+        'lab': user_lab,
+        'boxes': boxes
+    })
 
 
 # -----------------------------------------------------------API Views
@@ -252,10 +264,30 @@ def products(request, id=None):
                     status=200,
                 )
 
-        # update a product
-        else:
-            pass
 
+def create_compound(request):
+    """Api route to create a new compound/
+    URL: "products/create"
+    Methode: "POST"
+    Body: name, cas, smile, producer, quantity, purity, purity, lab, box
+    """
+    # check authentification
+    user = request.user
+
+    if not user.is_authenticated:
+        return JsonResponse({"error": "Need authentication"})
+
+    if request.method == "POST":
+        
+        # fetch the data from the body
+        data = json.loads(request.body)
+        print(data)
+
+    else:
+        return JsonResponse({"error": "Bad request"}, status=400)
+
+
+# ------------------------------------User API
 
 def edit_user(request):
     """

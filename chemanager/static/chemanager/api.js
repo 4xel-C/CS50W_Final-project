@@ -198,7 +198,7 @@ export async function editProduct(id, updatedData){
             body: JSON.stringify(updatedData)
         });
 
-        // Fetching error handling
+        // Error handling
         if (!response.ok){
             const errorData = await response.json();
             throw new Error(`HTTP error : ${response.status}, Message : ${errorData.error || 'Unknown Error'}`);
@@ -208,6 +208,37 @@ export async function editProduct(id, updatedData){
         return confirmation;
 
     } catch(error) {
+        throw error;
+    }
+}
+
+// create a product
+export async function createProduct(data){
+
+    const csrfToken = getCookie('csrftoken');
+    
+    try {
+        // send the data to the server to create a new product
+        const response = await fetch(`products/create`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify(data)
+        });
+
+         // Error handling
+         if (!response.ok){
+            const errorData = await response.json();
+            throw new Error(`HTTP error : ${response.status}, Message : ${errorData.error || 'Unknown Error'}`);
+        }
+        
+        // return the confirmation
+        const confirmation = await response.json();
+        return confirmation;
+
+    } catch(error){
         throw error;
     }
 }

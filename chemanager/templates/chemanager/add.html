@@ -2,15 +2,87 @@
 {% load static %}
 
 {% block body %}
-<div class="container">
+<div class="container mb-3">
     <h1 class="page-title">Add a new compound</h1>
 </div>
 
+{% if not lab %}
 <div class="container">
-    <div id="JSME" code="JME.class" name="JME" archive="JME.jar" width="360" height="315" id="JME">
+    <div class="alert alert-warning no-laboratory" role="alert">
+        You cannot register a product if you are not assigned to a laboratory.
+        Please check your <a href='{% url 'account' %}'>account</a> to choose your laboratory.
+    </div>
+</div>
+{% else %}
+
+<div class="container">
+    <div class="row">
+
+        <div class="col-lg-6">
+            <div class="mb-3 row">
+                <label for="inputName" class="col-sm-2 col-form-label">Name</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" id="inputName">
+                </div>
+            </div>
+
+            <div class="mb-3 row">
+                <label for="inputCas" class="col-sm-2 col-form-label">CAS</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" id="inputCas" placeholder="(Optional)">
+                </div>
+            </div>
+
+            <div class="mb-3 row">
+                <label for="inputSmile" class="col-sm-2 col-form-label">Smile</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" id="inputSmile" placeholder="(Optional)">
+                </div>
+            </div>
+
+            <div class="mb-3 row">
+                <label for="inputProduct" class="col-sm-2 col-form-label">Producer</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" id="inputProduct">
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+
+            <div class="mb-3 row">
+                <label for="inputQuantity" class="col-sm-3 col-form-label">Quantity (in g)</label>
+                <div class="col-sm-9">
+                  <input type="number" class="form-control" id="inputQuantity">
+                </div>
+            </div>
+
+            <div class="mb-3 row">
+                <label for="inputPurity" class="col-sm-2 col-form-label">Purity (in %)</label>
+                <div class="col-sm-10">
+                  <input type="numeric" class="form-control" id="inputPurity">
+                </div>
+            </div>
+
+            <div class="mb-3 row">
+                <label for="inputLocation" class="col-sm-6 col-form-label">Location: Laboratory <b>{{ lab.lab_number }}</b> - Box: </label>
+                <div class="col-sm-6">
+                    <select class="form-control edit-area" data-laboratory="{{ lab.lab_number }}" id="inputLocation">
+                        {% for box in boxes %}
+                        <option value="{{ box.box_number }}">{{ box.box_number }}</option>
+                        {% endfor %}
+                      </select> 
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="container text-end mb-3">
+        <button class="btn btn-primary btn-lg text-end submitButton">Create compound</button>
+    </div>
 </div>
 
-
+{% endif %}
 {% endblock %}
 
 {% block script %}
