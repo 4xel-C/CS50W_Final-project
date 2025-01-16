@@ -60,7 +60,7 @@ export function filterData(products, query){
     let productsFiltered = []
     
     products.forEach(product => {
-        if (product?.name?.toLowerCase().includes(query.toLowerCase()) || product?.cas?.includes(query) || product?.lab?.toLowerCase().includes(query.toLowerCase())) {
+        if (product?.name?.toLowerCase().includes(query.toLowerCase()) || product?.cas?.includes(query) || product?.lab?.toLowerCase().includes(query.toLowerCase()) || product?.box?.toLowerCase().includes(query.toLowerCase())) {
             productsFiltered.push(product);
         }
     });

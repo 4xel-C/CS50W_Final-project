@@ -1,5 +1,5 @@
-import { editUser, changePassword, deleteBox, createBox } from "./api.js";
-import { showAlert, updateUnclassifiedBox, createUnclassified } from "./helpers.js";
+import { changePassword, createBox, deleteBox, editUser } from "./api.js";
+import { createUnclassified, showAlert, updateUnclassifiedBox } from "./helpers.js";
 
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -122,6 +122,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const boxId = boxRow.dataset.boxid;
             const boxCount = boxRow.dataset.boxcount;
+            const boxName = boxRow.dataset.boxname;
+
+            // if trying to delete unclassified bow while still having some products inside: display an error
+            if (boxCount > 0 && boxName === "unclassified") {
+                showAlert("Cannot delete the unclassified box if there is still products in the box!", "danger");
+                return;
+            }
             
             try{
                 await deleteBox(boxId);
