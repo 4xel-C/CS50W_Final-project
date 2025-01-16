@@ -59,19 +59,41 @@
         <tr>
           <th scope="col">Box</th>
           <th scope="col">Compounds</th>
-          <th scope="col">Remove Box</th>
+          <th scope="col">Deletion</th>
         </tr>
       </thead>
       <tbody>
         {% for box in boxes %}
-        <tr>
+        <tr id="row{{ box.id }}">
           <th>{{ box.box_number }}</th>
           <td>{{ box.products.count }}</td>
-          <td><button class="btn p-0 text-danger deleteBox" data-boxId="{{ box.id }}"><i class="bi bi-trash"></i> Delete the box</button></td>
+          <td>
+            <button class="btn p-0 text-danger deleteBox" data-boxId="{{ box.id }}">
+            <i class="bi bi-trash"></i> Delete the box
+            </button>
+          </td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
+
+    <!-- Collapse for new box formular -->
+    <div class="collapse my-2" id="collapseNewBoxForm">
+      <div class="card card-body">
+        <div class="row justify-content-center align-items-center">
+          <div class="col-3 text-center">Name:</div>
+          <div class="col-7"><input type="text" class="form-control" id="newBoxInput"></div>
+          <div class="col-2"><button class="btn btn-success" id="#newBoxSubmit"><i class="bi bi-check-lg"></i></button></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-end">
+      <button class="btn btn-primary" id="newLocationButton" type="button"  data-bs-toggle="collapse" data-bs-target="#collapseNewBoxForm" aria-expanded="false" aria-controls="collapseNewBoxForm">
+        Add a new location
+      </button>
+    </div>
+
   </div>
 
 
@@ -104,7 +126,6 @@
         </div>
       </div>
     
-
 {% endblock %}
 
 {% block script %}

@@ -118,7 +118,7 @@ def account(request):
 
     # get all laboratory and all boxes
     labs = Laboratory.objects.all()
-    boxes = user_lab.boxes.all()
+    boxes = user_lab.boxes.all().order_by('box_number')
 
     return render(
         request,
