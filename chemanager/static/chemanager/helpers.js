@@ -71,10 +71,10 @@ export function filterData(products, query){
 
 // Function to build row for the table displaying products
 export function createRow(product){
-    let newRow = document.createElement('tr');
+    const newRow = document.createElement('tr');
 
     newRow.innerHTML = `
-            <td data-idPdt=${product.id}>${product.name}</th>
+            <td data-idPdt=${product.id}><a href=${detailUrlTemplate.replace('0', `${product.id}`)}>${product.name}</a></th>
             <td>${product.cas ? product.cas: '/'}</td>
             <td>${product.quantity} g</td>
             <td>${product.purity}%</td>
@@ -82,7 +82,7 @@ export function createRow(product){
             <td class='actions'> 
                 <button class="btn p-0 text-warning favorite"><i class="bi bi-star${product.isFavorite? '-fill' : ''}"></i></button> 
                 <button class="btn p-0 text-danger delete"><i class="bi bi-trash"></i></button>
-            </td>
+            </td>   
     `
     const favoriteButton = newRow.querySelector('.favorite');
     const deleteButton = newRow.querySelector('.delete');

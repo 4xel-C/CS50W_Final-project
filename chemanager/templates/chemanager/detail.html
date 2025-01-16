@@ -1,0 +1,16 @@
+{% extends "chemanager/layout.html" %}
+{% load static %}
+
+{% block body %}
+<div class="container mb-4">
+    <h2 class="page-title">Poroduct detail: <span id="productName">{{ product.name }}</span></h1>
+</div>
+
+<div class="container"></div>
+
+    
+{% endblock %}
+
+{% block script %}
+<script type="module" src="{% static 'chemanager/detail.js' %}"></script>
+{% endblock %}

@@ -13,6 +13,7 @@ urlpatterns = [
     path("inventory/laboratory/<int:id>", views.inventory, name="lab_id"),
     path("inventory/add", views.add_product, name="add_product"),
     path("watchlist", views.inventory, name="watchlist"),
+    path("detail/<int:id>", views.detail, name="detail"),
 
     # API URLs
     # Products

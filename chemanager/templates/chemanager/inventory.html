@@ -35,5 +35,9 @@
 {% endblock %}
 
 {% block script %}
+<!-- dynamicly generate url for each compounds for the detail -->
+<script>
+    const detailUrlTemplate = "{% url 'detail' 0 %}";
+  </script>
 <script type="module" src="{% static 'chemanager/inventory.js' %}"></script>
 {% endblock %}

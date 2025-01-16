@@ -169,6 +169,21 @@ def add_product(request):
         request, "chemanager/add.html", {"user": user, "lab": user_lab, "boxes": boxes}
     )
 
+# detail view
+@login_required
+def detail(request, id):
+    """view rendering the detail of 1 compound, with the possibility of updating the data
+    """
+
+    try:
+        product = Product.objects.get(id=id)
+    except ObjectDoesNotExist:
+        messages.error(request, "The product you tried to get does not exist")
+        return HttpResponseRedirect(reverse("inventory"))
+    
+    return render(request, "chemanager/detail.html", {
+        'product': product
+    })
 
 # -----------------------------------------------------------API Views
 

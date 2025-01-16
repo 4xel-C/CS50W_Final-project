@@ -14,6 +14,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     const labNumber = title.getAttribute('data-labNumber');
     const path = window.location.pathname;
 
+    // get the detail url
+    
+
     // Update the title
     if (path.includes('mylab')) {
         title.innerHTML = 'My laboratory'
