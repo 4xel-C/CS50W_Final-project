@@ -3,7 +3,7 @@
 
 {% block body %}
 <div class="container mb-4">
-    <h1 class="page-title">logged as <span id="usernameTitle">{{ user }}</span></h1>
+    <h1 class="page-title">logged as <span id="usernameTitle" data-userlabid="{{userLabId}}">{{ user }}</span></h1>
 </div>
 
 
@@ -54,6 +54,9 @@
   </div>
 
   <div class="container col-lg-5">
+    {% if not boxes %}
+    <p class="text-center"><b>No Box to display</b></p>
+    {% else %}
     <table class="table">
       <thead>
         <tr>
@@ -62,13 +65,13 @@
           <th scope="col">Deletion</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody id="boxTable">
         {% for box in boxes %}
-        <tr id="row{{ box.id }}">
+        <tr class="box-row" data-boxid="{{ box.id }}" data-boxcount="{{ box.products.count }}" data-boxname="{{ box.box_number }}">
           <th>{{ box.box_number }}</th>
-          <td>{{ box.products.count }}</td>
+          <td class="rowCount">{{ box.products.count }}</td>
           <td>
-            <button class="btn p-0 text-danger deleteBox" data-boxId="{{ box.id }}">
+            <button class="btn p-0 text-danger delete-box">
             <i class="bi bi-trash"></i> Delete the box
             </button>
           </td>
@@ -76,6 +79,7 @@
         {% endfor %}
       </tbody>
     </table>
+    {% endif %}
 
     <!-- Collapse for new box formular -->
     <div class="collapse my-2" id="collapseNewBoxForm">
@@ -83,7 +87,11 @@
         <div class="row justify-content-center align-items-center">
           <div class="col-3 text-center">Name:</div>
           <div class="col-7"><input type="text" class="form-control" id="newBoxInput"></div>
-          <div class="col-2"><button class="btn btn-success" id="#newBoxSubmit"><i class="bi bi-check-lg"></i></button></div>
+          <div class="col-2">
+            <button class="btn btn-success" id="newBoxSubmit" type="button"  data-bs-toggle="collapse" data-bs-target="#collapseNewBoxForm" aria-expanded="false" aria-controls="collapseNewBoxForm">
+              <i class="bi bi-check-lg">
+              </i>
+            </button></div>
         </div>
       </div>
     </div>

@@ -8,7 +8,7 @@ from django.shortcuts import render
 from django.urls import reverse
 import json
 
-from .models import User, Laboratory, Product
+from .models import User, Laboratory, Product, Box
 from .helpers import query_products, is_valid_cas
 
 
@@ -115,6 +115,7 @@ def account(request):
 
     if user_lab:
         user_lab_number = user_lab.lab_number
+        user_lab_id = user_lab.id
 
     # get all laboratory and all boxes
     labs = Laboratory.objects.all()
@@ -123,7 +124,7 @@ def account(request):
     return render(
         request,
         "chemanager/account.html",
-        {"user": user, "userLab": user_lab_number, "labs": labs, "boxes": boxes},
+        {"user": user, "userLab": user_lab_number, "userLabId": user_lab_id, "labs": labs, "boxes": boxes},
     )
 
 
@@ -273,7 +274,7 @@ def create_compound(request):
     user = request.user
 
     if not user.is_authenticated:
-        return JsonResponse({"error": "Need authentication"})
+        return JsonResponse({"error": "Need authentication"}, status=401)
 
     if request.method == "POST":
         # fetch the data from the body
@@ -289,7 +290,7 @@ def create_compound(request):
             data["quantity"] = float(data["quantity"])
             data["purity"] = float(data["purity"])
 
-            if data["quantity"] <= 0 or data["purity"] <= 0:
+            if data["quantity"] <= 0 or not 0 <= data["purity"] <= 100:
                 raise ValueError
 
             # Ensure the number as 3 decimal max for the quantity and 1 for the purity
@@ -298,7 +299,7 @@ def create_compound(request):
 
         except (TypeError, ValueError):
             return JsonResponse(
-                {"error": "Quantity or Purity must be a postive number"}, status=400
+                {"error": "Quantity or Purity must be a postive number "}, status=400
             )
 
         # control CAS:
@@ -337,9 +338,92 @@ def create_compound(request):
         return JsonResponse({"error": "Bad request"}, status=400)
 
 
+def delete_box(request, id):
+    """API view to delete a box from a laboratory. All products still inside the box are displaced in an 'undefined' box inside the same laboratory.
+    
+    URL: "/box/<int:id>/delete
+    method: "DELETE"
+    """
+    # check authentification
+    user = request.user
+
+    if not user.is_authenticated:
+        return JsonResponse({"error": "Need authentication"}, status=401)
+    
+    if request.method == "DELETE":
+        
+        # get the corresponding box to delete
+        try:
+            box_to_delete = Box.objects.get(id=id)
+        except ObjectDoesNotExist:
+            return JsonResponse({"message": "Box not found"}, status=404)
+        
+        # get all the products from the current box
+        products = box_to_delete.products.all()
+        
+        # If products, displace all of them in an 'unclassified' box
+        if products:
+            
+            # Get the 'unclassified box' of the same lab 
+            unclassified_box, created = Box.objects.get_or_create(box_number='unclassified', lab=box_to_delete.lab )
+            
+            if unclassified_box == box_to_delete:
+                return JsonResponse({"error": "Cannot remove unclassified box if there is still products"}, status=400)
+            
+            # move all the products
+            products.update(location=unclassified_box)        
+        
+        # delete the box and sent confirmation JsonResponse
+        box_to_delete.delete()
+        return JsonResponse({"message": "Product deleted successfully"}, status=200)
+    
+    # If wrong method, return error
+    return JsonResponse({"error": "Bad request"}, status=400)
+
+
+def create_box(request):
+    """API route to create a new box in the specified laboratory
+    
+    URL: "box/create"
+    method: "POST"
+    body: 'labId', 'boxNumber' 
+    """
+    # check authentification
+    user = request.user
+
+    if not user.is_authenticated:
+        return JsonResponse({"error": "Need authentication"}, status=401)
+    
+    if request.method == "POST":
+        # fetch the data from the body
+        data = json.loads(request.body)
+        
+        if not data['labId'] or not data['boxNumber']:
+            return JsonResponse({"error": "Bad request"}, status=400)
+        try:
+            lab_id = int(data['labId'])
+            box_number = data['boxNumber']
+            if lab_id < 0:
+                raise ValueError
+        except ValueError:
+            return JsonResponse({"error": "Please enter a correct id"}, status=400)
+        
+        # get the laboratory where to create the box
+        try:
+            lab = Laboratory.objects.get(id=lab_id)
+        except ObjectDoesNotExist:
+            return JsonResponse({"error": "laboratory in which the box should be created does not exist"}, status=404)
+        
+        # create the box and return a positive response
+        box = Box.objects.create(lab=lab, box_number=box_number)
+        box.save()
+        return JsonResponse({"message": "Box successfully created"}, status=200)
+        
+    # If wrong method, return error
+    return JsonResponse({"error": "Bad request"}, status=400)
+
+
 # ------------------------------------User API
-
-
 def edit_user(request):
     """
     API view to edit a user informations

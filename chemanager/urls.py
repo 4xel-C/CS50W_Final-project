@@ -23,6 +23,10 @@ urlpatterns = [
     path("products/laboratory/<int:id>", views.products, name="lab_products"),
     path("products/watchlist", views.products, name="fetch_watchlist"),
     path("products/create", views.create_compound, name="create_comound"),
+    
+    # Box
+    path("box/<int:id>/delete", views.delete_box, name="delete_box"),
+    path("box/create", views.create_box, name="create_box"),
 
     # user
     path("user/me", views.edit_user, name="edit_user"),

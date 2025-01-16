@@ -114,3 +114,47 @@ export function createRow(product){
 
     return newRow
 }
+
+
+// Update the unclassified box count. If the function find one, return true.
+export function updateUnclassifiedBox(count, rowsGroup) {
+
+    if (count === 0){
+        return false;
+    }
+
+    // check if among the Button, there is one for the box "unclassified"
+    for (const row of rowsGroup) {
+
+        if (row.dataset.boxname === "unclassified") {
+
+            // Select the cell containing the count and update the innerHTML
+            const countCell = row.querySelector('.rowCount'); 
+
+            countCell.innerHTML = +countCell.innerHTML + +count; 
+            return true;
+        }
+    }
+    
+    return false
+}
+
+// FUnction to create unclassified box row
+export function createUnclassified(count){
+    
+    const newRow = document.createElement('tr');
+
+    newRow.innerHTML = `
+        <tr class="box-row" data-boxcount="${count}" data-boxname="unclassified">
+          <th>unclassified</th>
+          <td id="rowCount">${count}</td>
+          <td>
+            <button class="btn p-0 text-danger delete-box">
+            <i class="bi bi-trash"></i> Delete the box
+            </button>
+          </td>
+        </tr>
+    `
+
+    return newRow;
+}

@@ -242,3 +242,64 @@ export async function createProduct(data){
         throw error;
     }
 }
+
+// delete a box
+export async function deleteBox(id){
+
+    const csrfToken = getCookie('csrftoken');
+    
+    try {
+        // send the data to the server to create a new product
+        const response = await fetch(`/box/${id}/delete`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+        });
+
+         // Error handling
+         if (!response.ok){
+            const errorData = await response.json();
+            throw new Error(`HTTP error : ${response.status}, Message : ${errorData.error || 'Unknown Error'}`);
+        }
+        
+        // return the confirmation
+        const confirmation = await response.json();
+        return confirmation;
+
+    } catch(error){
+        throw error;
+    }
+}
+
+// create a box
+export async function createBox(data){
+
+    const csrfToken = getCookie('csrftoken');
+    
+    try {
+        // send the data to the server to create a new product
+        const response = await fetch(`/box/create`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify(data)
+        });
+
+         // Error handling
+         if (!response.ok){
+            const errorData = await response.json();
+            throw new Error(`HTTP error : ${response.status}, Message : ${errorData.error || 'Unknown Error'}`);
+        }
+        
+        // return the confirmation
+        const confirmation = await response.json();
+        return confirmation;
+
+    } catch(error){
+        throw error;
+    }
+}
