@@ -37,20 +37,33 @@
                 <dt class="col-3">Quantity (g):</dt>
                 <dd class="col-9  data-text">{{ quantity }}</dd>
                 <dd class="col-9 update-input" data-origin="{{ quantity }}" hidden><input class="form-control inputValue" type="number" value="{{ quantity }}"></dd>
-                    {% comment %} <textarea class="form-control edit-area" rows="1">{{ quantity }}</textarea> {% endcomment %}
               
                 <dt class="col-3">Purity (%):</dt>
                 <dd class="col-9  data-text">{{ purity }}</dd>
                 <dd class="col-9 update-input" data-origin="{{ purity }}" hidden><input class="form-control inputValue" type="number" value="{{ purity }}"></dd>
-                    {% comment %} <textarea class="form-control edit-area" rows="1">{{ purity }}</textarea> {% endcomment %}
               
                 <dt class="col-3">Laboratory:</dt>
                 <dd class="col-9  data-text">{{ product.location.lab }}</dd>
-                <dd class="col-9 update-input" data-origin="{{ product.location.lab }}" hidden><textarea class="form-control edit-area inputValue" rows="1">{{ product.location.lab }}</textarea></dd>
+                <dd class="col-9 update-input" data-origin="{{ product.location.lab }}" hidden>
+                    <select class="form-control edit-area inputValue" rows="1">
+                        {% for laboratory in laboratories %}
+                        <option value="{{ laboratory.lab_number }}" {% if laboratory == product.location.lab %} selected {% endif %}>{{ laboratory.lab_number }}</option>
+                        {% endfor %}
+                    </select>
+                </dd>
 
                 <dt class="col-3">Box location:</dt>
                 <dd class="col-9  data-text">{{ product.location.box_number }}</dd>
-                <dd class="col-9 update-input" data-origin="{{ product.location.box_number }}" hidden><textarea class="form-control edit-area inputValue" rows="1">{{ product.location.box_number }}</textarea></dd>
+                <dd class="col-9 update-input" data-origin="{{ product.location.box_number }}" hidden>
+                    <select class="form-control edit-area inputValue select-box" rows="1">
+                        <option value="" class='option-placeholder' disabled>Choose a location</option>
+                        {% for laboratory in laboratories %}
+                        {% for box in laboratory.boxes.all %}
+                        <option class="{{ laboratory.lab_number }}" value="{{ box.box_number }}" {% if box == product.location %} selected {% endif %}>{{ laboratory.lab_number }}: Box {{ box.box_number }}</option>
+                        {% endfor %}
+                        {% endfor %}
+                    </select>
+                </dd>
             </dl>
 
         </div>

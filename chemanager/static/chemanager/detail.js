@@ -18,13 +18,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const submitButton = document.querySelector('.submitButton');
     const cancelButton = document.querySelector('.cancelButton');
     const productName = document.querySelector('#productName');
+    const selectBox = document.querySelector('.select-box');
 
     // group selectors
     const dataTexts = document.querySelectorAll('.data-text');
     const updateInputs = document.querySelectorAll('.update-input');
+    const boxOptions = selectBox.querySelectorAll('option');
 
     // get the id of the product displayed on the page
     const id = productName.dataset.productid;
+
+    // Clear the select box option from the box from other labs
+    boxOptions.forEach(boxOption => {
+        boxOption.hidden = true;
+    });
+
+    // display only the options that correcpond to the selected laboratory
+    const lab = updateInputs[6].querySelector('.inputValue').value
+    const correspondingOptions = document.querySelectorAll(`.${lab}`)
+
+    correspondingOptions.forEach(option => {
+        option.hidden = false
+    });
+
 
     // Envent Listener: Updata data
     updateButton.addEventListener('click', () => {
@@ -40,6 +56,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
         updateInputs.forEach(updateInput => {
             updateInput.hidden = false;
+        });
+    });
+
+    
+    // Event listener to the laboratory selection, to change possibility selections of the box location
+    updateInputs[6].addEventListener('change', () => {
+        
+        // Clear the select menu
+        selectBox.querySelector('.option-placeholder').selected = true;
+
+        // hide all options
+        boxOptions.forEach(boxOption => {
+            boxOption.hidden = true;
+        });
+
+        // display only the options that correcpond to the selected laboratory
+        const lab = updateInputs[6].querySelector('.inputValue').value
+        const correspondingOptions = document.querySelectorAll(`.${lab}`)
+
+        correspondingOptions.forEach(option => {
+            option.hidden = false
         });
     });
 

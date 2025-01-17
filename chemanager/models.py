@@ -96,18 +96,25 @@ class Product(models.Model):
     
     # Check the datas while saving an instance and raise an error if something is wrong
     def clean(self):
-        # check quantity
-        if self.quantity <= 0:
-            raise ValidationError({'quantity': 'La quantité doit être supérieure à 0.'})
-
-        # check purity
-        if self.purity is not None and (self.purity < 0 or self.purity > 100):
-            raise ValidationError({'purity': 'La pureté doit être comprise entre 0 et 100.'})
         
-        # round the purity and the quantity
-        if self.purity is not None:
-            self.purity = round(self.purity, 1)
-
-        if self.quantity is not None:
-            self.purity = round(self.purity, 3)
-
+        # check quantity and purity
+        if self.quantity:
+            try:
+                if float(self.quantity) <= 0:
+                    raise ValueError
+            except (TypeError, ValueError):
+                raise ValidationError('Incorrect quantity')
+            self.quantity = round(float(self.quantity), 3)
+        else:
+            self.quantity = 0
+        
+        if self.purity:
+            try:
+                if not (0 <= float(self.purity) <= 100):
+                    raise ValueError
+            except (TypeError, ValueError):
+                raise ValidationError('Incorrect purity') 
+            self.purity = round(float(self.purity), 1)
+        else:
+            self.purity = 0
+     

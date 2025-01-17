@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import IntegrityError
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
@@ -184,12 +184,16 @@ def detail(request, id):
     
     # Format the quantity and the purity
     quantity = "{:.3f}".format(float(product.quantity)).rstrip('0').rstrip('.')
-    purity = "{:.1f}".format(float(product.purity)).rstrip('0').rstrip('.')
+    purity = "{:.1f}".format(float(product.purity)).rstrip('0').rstrip('.') if product.purity else 0
+    
+    # Select all laboratories to display them in the select menu
+    laboratories = Laboratory.objects.all().order_by('lab_number')
     
     return render(request, "chemanager/detail.html", {
         'product': product,
         'quantity': quantity,
-        'purity': purity
+        'purity': purity, 
+        'laboratories': laboratories
     })
 
 # -----------------------------------------------------------API Views
@@ -405,7 +409,7 @@ def edit_product(request, id):
             lab = Laboratory.objects.get(lab_number=data['laboratory'])
             box = Box.objects.get(lab=lab ,box_number=data['box'])
         except ObjectDoesNotExist:
-            return JsonResponse({"message": "The box location does not exist"}, status=404)
+            return JsonResponse({"message": "The box location does not exist or does not correspond to the selected laboratory"}, status=404)
         
         # update the object
         product.name=data['name']
@@ -415,6 +419,12 @@ def edit_product(request, id):
         product.quantity=data['quantity']
         product.purity=data['purity']
         product.location=box
+        
+        try:
+            product.clean()
+        except ValidationError:
+            return JsonResponse({"message": f"Incorrect quantity or purity"}, status=400)
+              
         product.save()
         
         return JsonResponse({"message": "Product updated succesfully"}, status=200)

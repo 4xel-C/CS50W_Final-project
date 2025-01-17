@@ -32,7 +32,7 @@ def is_valid_cas(cas):
     pattern = r'^\d{2,7}-\d{2}-\d$'
     match = re.match(pattern, cas)
     
-    if match or not cas:
+    if match or not cas or cas == "None":
         return True
     else:
         return False
