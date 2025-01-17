@@ -8,7 +8,7 @@ function createRow(lab){
         <td>${lab.productCount}</td>
     `
 
-    // event listener to fetch all the products 
+    // event listener to fetch all the products contained in the lab of the row
     newRow.addEventListener('click', () => {
         window.location.href = `/inventory/laboratory/${lab.id}`; 
     })

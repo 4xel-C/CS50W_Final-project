@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.core.exceptions import ValidationError
 
 
 class Laboratory(models.Model):
@@ -33,7 +34,7 @@ class Box(models.Model):
     box_number = models.CharField(max_length=50)
 
     def __str__(self):
-        return f"Box {self.box_number} in lab {self.lab.lab_number}"
+        return f"Box: {self.box_number} in lab {self.lab.lab_number}"
 
 
 class User(AbstractUser):
@@ -92,3 +93,21 @@ class Product(models.Model):
             "updateDate": self.update_date,
             "isFavorite": self.is_favorite(user),
         }
+    
+    # Check the datas while saving an instance and raise an error if something is wrong
+    def clean(self):
+        # check quantity
+        if self.quantity <= 0:
+            raise ValidationError({'quantity': 'La quantité doit être supérieure à 0.'})
+
+        # check purity
+        if self.purity is not None and (self.purity < 0 or self.purity > 100):
+            raise ValidationError({'purity': 'La pureté doit être comprise entre 0 et 100.'})
+        
+        # round the purity and the quantity
+        if self.purity is not None:
+            self.purity = round(self.purity, 1)
+
+        if self.quantity is not None:
+            self.purity = round(self.purity, 3)
+

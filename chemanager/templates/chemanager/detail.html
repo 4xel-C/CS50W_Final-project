@@ -3,10 +3,84 @@
 
 {% block body %}
 <div class="container mb-4">
-    <h2 class="page-title">Poroduct detail: <span id="productName">{{ product.name }}</span></h1>
+    <h2 class="page-title">Product detail: <span id="productName" data-productid={{ product.id }}>{{ product.name }}</span></h2>
 </div>
 
-<div class="container"></div>
+<div class="container">
+    <div class="row align-items-center">
+
+        <div class="col-lg-6">
+
+            <dl class="row">
+                <dt class="col-3">Name:</dt>
+                <dd class="col-9 data-text">{{ product.name }}</dd>
+                <dd class="col-9 update-input" data-origin="{{ product.name }}" hidden><textarea class="form-control edit-area inputValue" rows="1">{{ product.name }}</textarea></dd>
+
+                <dt class="col-3">Smile Code:</dt>
+                <dd class="col-9  data-text">{{ product.smile }}</dd>
+                <dd class="col-9 update-input" data-origin="{{ product.smile }}" hidden><textarea class="form-control edit-area inputValue" rows="1">{{ product.smile }}</textarea></dd>
+              
+                <dt class="col-3">CAS Number:</dt>
+                <dd class="col-9  data-text">{{ product.cas_number }}</dd>
+                <dd class="col-9 update-input" data-origin="{{ product.cas_number }}" hidden><textarea class="form-control edit-area inputValue" rows="1">{{ product.cas_number }}</textarea></dd>
+              
+                <dt class="col-3">Producer:</dt>
+                <dd class="col-9  data-text">{{ product.producer }}</dd>
+                <dd class="col-9 update-input" data-origin="{{ product.producer }}" hidden><textarea class="form-control edit-area inputValue" rows="1">{{ product.producer }}</textarea></dd>
+            </dl>
+
+        </div>
+
+        <div class="col-lg-6">
+            
+            <dl class="row">
+                <dt class="col-3">Quantity (g):</dt>
+                <dd class="col-9  data-text">{{ quantity }}</dd>
+                <dd class="col-9 update-input" data-origin="{{ quantity }}" hidden><input class="form-control inputValue" type="number" value="{{ quantity }}"></dd>
+                    {% comment %} <textarea class="form-control edit-area" rows="1">{{ quantity }}</textarea> {% endcomment %}
+              
+                <dt class="col-3">Purity (%):</dt>
+                <dd class="col-9  data-text">{{ purity }}</dd>
+                <dd class="col-9 update-input" data-origin="{{ purity }}" hidden><input class="form-control inputValue" type="number" value="{{ purity }}"></dd>
+                    {% comment %} <textarea class="form-control edit-area" rows="1">{{ purity }}</textarea> {% endcomment %}
+              
+                <dt class="col-3">Laboratory:</dt>
+                <dd class="col-9  data-text">{{ product.location.lab }}</dd>
+                <dd class="col-9 update-input" data-origin="{{ product.location.lab }}" hidden><textarea class="form-control edit-area inputValue" rows="1">{{ product.location.lab }}</textarea></dd>
+
+                <dt class="col-3">Box location:</dt>
+                <dd class="col-9  data-text">{{ product.location.box_number }}</dd>
+                <dd class="col-9 update-input" data-origin="{{ product.location.box_number }}" hidden><textarea class="form-control edit-area inputValue" rows="1">{{ product.location.box_number }}</textarea></dd>
+            </dl>
+
+        </div>
+
+    </div>
+
+    <div class="container text-end mb-3">
+        <button class="btn btn-primary btn-lg text-end updateButton">Update data</button>
+        <button class="btn btn-success btn-lg text-end submitButton" hidden>Submit</button>
+        <button class="btn btn-danger btn-lg text-end cancelButton" hidden>Cancel</button>
+    </div>
+
+    <hr>
+
+    <!-- Product analysis section -->
+    <h2 class="page-title">Analysis panel</h2>
+
+    <!-- Displayed if product has no Smile -->
+     {% if not product.smile %}
+    <div class="container">
+        <div class="alert alert-primary no-product" role="alert">
+            The analysis is available only if the product has a Smile Code specified.
+        </div>
+    </div>
+    {% else %}
+    test
+    {% endif %}
+
+
+</div>
 
     
 {% endblock %}

@@ -22,7 +22,7 @@ export async function editUser(updatedData){
         // Fetching error handling
         if (!response.ok){
             const errorData = await response.json();
-            throw new Error(`HTTP error : ${response.status}, Message : ${errorData.error || 'Unknown Error'}`);
+            throw new Error(`HTTP error : ${response.status}, Message : ${errorData.message || 'Unknown Error'}`);
         }
 
         const confirmation = await response.json();
@@ -52,7 +52,7 @@ export async function changePassword(passwordsData){
         // Fetching error handling
         if (!response.ok){
             const errorData = await response.json();
-            throw new Error(`HTTP error : ${response.status}, Message : ${errorData.error || 'Unknown Error'}`);
+            throw new Error(`HTTP error : ${response.status}, Message : ${errorData.message || 'Unknown Error'}`);
         }
 
         const confirmation = await response.json();
@@ -75,7 +75,7 @@ export async function fetchSite(){
         // Fetching error handling
         if (!response.ok){
             const errorData = await response.json();
-            throw new Error(`HTTP error : ${errorData.status}, Message : ${errorData.error || 'Unknown Error'}`);
+            throw new Error(`HTTP error : ${errorData.status}, Message : ${errorData.message || 'Unknown Error'}`);
         }
 
         const data = await response.json();
@@ -114,7 +114,7 @@ export async function fetchProducts(labId = null, productId = null){
         // Fetching error handling
         if (!response.ok){
             const errorData = await response.json();
-            throw new Error(`HTTP error : ${response.status}, Message : ${errorData.error || 'Unknown Error'}`);
+            throw new Error(`HTTP error : ${response.status}, Message : ${errorData.message || 'Unknown Error'}`);
         }
 
         const data = await response.json();
@@ -142,7 +142,7 @@ export async function deleteProduct(id){
         // Fetching error handling
         if (!response.ok){
             const errorData = await response.json();
-            throw new Error(`HTTP error : ${response.status}, Message : ${errorData.error || 'Unknown Error'}`);
+            throw new Error(`HTTP error : ${response.status}, Message : ${errorData.message || 'Unknown Error'}`);
         }
 
         const confirmation = await response.json();
@@ -171,37 +171,7 @@ export async function favoriteProduct(id){
         // Fetching error handling
         if (!response.ok){
             const errorData = await response.json();
-            throw new Error(`HTTP error : ${response.status}, Message : ${errorData.error || 'Unknown Error'}`);
-        }
-
-        const confirmation = await response.json();
-        return confirmation;
-
-    } catch(error) {
-        throw error;
-    }
-}
-
-// Edit a product
-export async function editProduct(id, updatedData){
-
-    const csrfToken = getCookie('csrftoken');
-
-    try {
-        // try to fetch the data
-        const response = await fetch(`/products/${id}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrfToken
-            },
-            body: JSON.stringify(updatedData)
-        });
-
-        // Error handling
-        if (!response.ok){
-            const errorData = await response.json();
-            throw new Error(`HTTP error : ${response.status}, Message : ${errorData.error || 'Unknown Error'}`);
+            throw new Error(`HTTP error : ${response.status}, Message : ${errorData.message || 'Unknown Error'}`);
         }
 
         const confirmation = await response.json();
@@ -231,7 +201,7 @@ export async function createProduct(data){
          // Error handling
          if (!response.ok){
             const errorData = await response.json();
-            throw new Error(`HTTP error : ${response.status}, Message : ${errorData.error || 'Unknown Error'}`);
+            throw new Error(`HTTP error : ${response.status}, Message : ${errorData.message || 'Unknown Error'}`);
         }
         
         // return the confirmation
@@ -261,7 +231,7 @@ export async function deleteBox(id){
          // Error handling
          if (!response.ok){
             const errorData = await response.json();
-            throw new Error(`HTTP error : ${response.status}, Message : ${errorData.error || 'Unknown Error'}`);
+            throw new Error(`HTTP error : ${response.status}, Message : ${errorData.message || 'Unknown Error'}`);
         }
         
         // return the confirmation
@@ -292,7 +262,7 @@ export async function createBox(data){
          // Error handling
          if (!response.ok){
             const errorData = await response.json();
-            throw new Error(`HTTP error : ${response.status}, Message : ${errorData.error || 'Unknown Error'}`);
+            throw new Error(`HTTP error : ${response.status}, Message : ${errorData.message || 'Unknown Error'}`);
         }
         
         // return the confirmation
@@ -300,6 +270,37 @@ export async function createBox(data){
         return confirmation;
 
     } catch(error){
+        throw error;
+    }
+}
+
+// Edit a user information using a put method
+export async function editProduct(updatedData, id){
+
+    const csrfToken = getCookie('csrftoken');
+
+    try {
+        // try to fetch the data
+        const response = await fetch(`/products/${id}/edit`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify(updatedData)
+        });
+
+        
+        // Fetching error handling
+        if (!response.ok){
+            const errorData = await response.json();
+            throw new Error(`HTTP error : ${response.status}, Message : ${errorData.message || 'Unknown Error'}`);
+        }
+
+        const confirmation = await response.json();
+        return confirmation;
+
+    } catch(error) {
         throw error;
     }
 }
