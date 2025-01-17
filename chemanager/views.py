@@ -7,10 +7,13 @@ from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 import json
+import io
+import base64
 
 from .models import User, Laboratory, Product, Box
 from .helpers import query_products, is_valid_cas
 from rdkit import Chem
+from rdkit.Chem import Descriptors, Draw
 
 
 # index view
@@ -189,11 +192,38 @@ def detail(request, id):
     # Select all laboratories to display them in the select menu
     laboratories = Laboratory.objects.all().order_by('lab_number')
     
+    if product.smile:
+        smile = product.smile
+        
+        # Generate the molecule from RDKit
+        mol = Chem.MolFromSmiles(smile)
+        
+        mol_weight = Descriptors.MolWt(mol)
+        logp = Descriptors.MolLogP(mol)
+        hdonors = Descriptors.NumHDonors(mol)
+        hacceptors = Descriptors.NumHAcceptors(mol)
+        
+        # Generate an image of the molecule in buffer
+        img = Draw.MolToImage(mol)
+        
+        img_buffer = io.BytesIO()
+        img.save(img_buffer, format='PNG')
+        img_buffer.seek(0)
+        
+        # Convert to base64 for rendering in template
+        img_data = base64.b64encode(img_buffer.getvalue()).decode('utf-8')
+    
     return render(request, "chemanager/detail.html", {
         'product': product,
         'quantity': quantity,
         'purity': purity, 
-        'laboratories': laboratories
+        'laboratories': laboratories, 
+        'mol_weight': round(mol_weight, 3),
+        'logp': round(logp, 3),
+        'hdonors': hdonors,
+        'hacceptors': hacceptors, 
+        'img': img_data
+        
     })
 
 # -----------------------------------------------------------API Views

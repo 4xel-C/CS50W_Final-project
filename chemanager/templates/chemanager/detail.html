@@ -9,7 +9,7 @@
 <div class="container">
     <div class="row align-items-center">
 
-        <div class="col-lg-6">
+        <div class="col-md-6">
 
             <dl class="row">
                 <dt class="col-3">Name:</dt>
@@ -31,7 +31,7 @@
 
         </div>
 
-        <div class="col-lg-6">
+        <div class="col-md-6">
             
             <dl class="row">
                 <dt class="col-3">Quantity (g):</dt>
@@ -89,7 +89,34 @@
         </div>
     </div>
     {% else %}
-    test
+    
+    <div class="row align-items-center">
+
+        <div class="col-md-6 mol-container text-center">
+            <img src="data:image/png;base64,{{ img }}" alt="molecule image" style="width: 300px; height: 300px;">
+        </div>
+
+        <div class="col-md-6">
+            
+            <dl class="row">
+                <dt class="col-4">Molecular weight:</dt>
+                <dd class="col-8">{{ mol_weight }}</dd>
+              
+                <dt class="col-4">LogP:</dt>
+                <dd class="col-8">{{ logp }}</dd>
+              
+                <dt class="col-4">H-Bond donors</dt>
+                <dd class="col-8">{{ hdonors }}</dd>
+
+                <dt class="col-4">H-Bond acceptors:</dt>
+                <dd class="col-8">{{ hacceptors }}</dd>
+            </dl>
+
+        </div>
+
+    </div>
+
+
     {% endif %}
 
 
