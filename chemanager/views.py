@@ -198,8 +198,8 @@ def detail(request, id):
         # Generate the molecule from RDKit
         mol = Chem.MolFromSmiles(smile)
         
-        mol_weight = Descriptors.MolWt(mol)
-        logp = Descriptors.MolLogP(mol)
+        mol_weight = round(Descriptors.MolWt(mol), 3)
+        logp = round(Descriptors.MolLogP(mol), 3)
         hdonors = Descriptors.NumHDonors(mol)
         hacceptors = Descriptors.NumHAcceptors(mol)
         
@@ -213,13 +213,20 @@ def detail(request, id):
         # Convert to base64 for rendering in template
         img_data = base64.b64encode(img_buffer.getvalue()).decode('utf-8')
     
+    else:
+        mol_weight = 0
+        logp = 0
+        hdonors = 0
+        hacceptors = 0
+        img_data = 0
+    
     return render(request, "chemanager/detail.html", {
         'product': product,
         'quantity': quantity,
         'purity': purity, 
         'laboratories': laboratories, 
-        'mol_weight': round(mol_weight, 3),
-        'logp': round(logp, 3),
+        'mol_weight': mol_weight,
+        'logp': logp,
         'hdonors': hdonors,
         'hacceptors': hacceptors, 
         'img': img_data
