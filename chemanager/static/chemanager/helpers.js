@@ -74,7 +74,7 @@ export function createRow(product){
     const newRow = document.createElement('tr');
 
     newRow.innerHTML = `
-            <td data-idPdt=${product.id}><a href=${detailUrlTemplate.replace('0', `${product.id}`)}>${product.name}</a></th>
+            <td data-idPdt=${product.id}>${product.name}</th>
             <td>${product.cas ? product.cas: '/'}</td>
             <td>${product.quantity} g</td>
             <td>${product.purity}%</td>
@@ -87,8 +87,16 @@ export function createRow(product){
     const favoriteButton = newRow.querySelector('.favorite');
     const deleteButton = newRow.querySelector('.delete');
 
+    // Event listener to make the row clickable
+    newRow.addEventListener('click', () => {
+        window.location.href = detailUrlTemplate.replace('0', `${product.id}`); 
+    });
+
+
     // add the event listener to the delete button
-    deleteButton.addEventListener('click', async () => {
+    deleteButton.addEventListener('click', async (event) => {
+        event.stopPropagation();
+
         try {
             deleteProduct(product.id);
             newRow.remove();
@@ -99,7 +107,8 @@ export function createRow(product){
 
     // add the event listener to the favorite button
     favoriteButton.addEventListener('click', async (event) => {
-
+        event.stopPropagation();
+        
         const confirmation = await favoriteProduct(product.id);
         
         // Change the icon if clicked

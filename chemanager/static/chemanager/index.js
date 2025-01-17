@@ -10,7 +10,7 @@ function createRow(lab){
 
     // event listener to fetch all the products contained in the lab of the row
     newRow.addEventListener('click', () => {
-        window.location.href = `/inventory/laboratory/${lab.id}`; 
+        window.location.href = laboratoryUrl.replace(0, lab.id) ; 
     })
 
     return newRow

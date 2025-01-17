@@ -35,5 +35,8 @@
 {% endblock %}
 
 {% block script %}
+<script>
+  const laboratoryUrl = "{% url 'lab_id' 0 %}";
+</script>
 <script type="module" src="{% static 'chemanager/index.js' %}"></script>
 {% endblock %}
