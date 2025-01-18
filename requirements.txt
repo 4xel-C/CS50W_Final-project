@@ -1,0 +1,2 @@
+django
+rdkit>=2024.9.4

@@ -82,7 +82,7 @@ DATABASES = {
 }
 
 # login URL
-LOGIN_URL = '/login' 
+LOGIN_URL = "/login"
 
 AUTH_USER_MODEL = "chemanager.User"
 

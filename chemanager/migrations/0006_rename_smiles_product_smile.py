@@ -4,15 +4,14 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('chemanager', '0005_product_favorites'),
+        ("chemanager", "0005_product_favorites"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='product',
-            old_name='smiles',
-            new_name='smile',
+            model_name="product",
+            old_name="smiles",
+            new_name="smile",
         ),
     ]

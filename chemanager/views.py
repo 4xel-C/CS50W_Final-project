@@ -120,15 +120,25 @@ def account(request):
     if user_lab:
         user_lab_number = user_lab.lab_number
         user_lab_id = user_lab.id
+        boxes = user_lab.boxes.all().order_by("box_number")
+    else:
+        user_lab_number = None
+        user_lab_id = None
+        boxes = None
 
     # get all laboratory and all boxes
     labs = Laboratory.objects.all()
-    boxes = user_lab.boxes.all().order_by('box_number')
 
     return render(
         request,
         "chemanager/account.html",
-        {"user": user, "userLab": user_lab_number, "userLabId": user_lab_id, "labs": labs, "boxes": boxes},
+        {
+            "user": user,
+            "userLab": user_lab_number,
+            "userLabId": user_lab_id,
+            "labs": labs,
+            "boxes": boxes,
+        },
     )
 
 
@@ -168,70 +178,81 @@ def add_product(request):
     # Recuperate all the boxes available in the laboratory
     if user_lab:
         boxes = user_lab.boxes.all()
+    else:
+        user_lab = None
+        boxes = None
 
     return render(
         request, "chemanager/add.html", {"user": user, "lab": user_lab, "boxes": boxes}
     )
 
+
 # detail view
 @login_required
 def detail(request, id):
-    """view rendering the detail of 1 compound, with the possibility of updating the data
-    """
+    """view rendering the detail of 1 compound, with the possibility of updating the data"""
 
     try:
         product = Product.objects.get(id=id)
     except ObjectDoesNotExist:
         messages.error(request, "The product you tried to get does not exist")
         return HttpResponseRedirect(reverse("inventory"))
-    
+
     # Format the quantity and the purity
-    quantity = "{:.3f}".format(float(product.quantity)).rstrip('0').rstrip('.')
-    purity = "{:.1f}".format(float(product.purity)).rstrip('0').rstrip('.') if product.purity else 0
-    
+    quantity = "{:.3f}".format(float(product.quantity)).rstrip("0").rstrip(".")
+    purity = (
+        "{:.1f}".format(float(product.purity)).rstrip("0").rstrip(".")
+        if product.purity
+        else 0
+    )
+
     # Select all laboratories to display them in the select menu
-    laboratories = Laboratory.objects.all().order_by('lab_number')
-    
+    laboratories = Laboratory.objects.all().order_by("lab_number")
+
     if product.smile:
         smile = product.smile
-        
+
         # Generate the molecule from RDKit
         mol = Chem.MolFromSmiles(smile)
-        
+
         mol_weight = round(Descriptors.MolWt(mol), 3)
         logp = round(Descriptors.MolLogP(mol), 3)
         hdonors = Descriptors.NumHDonors(mol)
         hacceptors = Descriptors.NumHAcceptors(mol)
-        
+
         # Generate an image of the molecule in buffer
         img = Draw.MolToImage(mol)
-        
+
         img_buffer = io.BytesIO()
-        img.save(img_buffer, format='PNG')
+        img.save(img_buffer, format="PNG")
         img_buffer.seek(0)
-        
+
         # Convert to base64 for rendering in template
-        img_data = base64.b64encode(img_buffer.getvalue()).decode('utf-8')
-    
+        img_data = base64.b64encode(img_buffer.getvalue()).decode("utf-8")
+
     else:
         mol_weight = 0
         logp = 0
         hdonors = 0
         hacceptors = 0
         img_data = 0
-    
-    return render(request, "chemanager/detail.html", {
-        'product': product,
-        'quantity': quantity,
-        'purity': purity, 
-        'laboratories': laboratories, 
-        'mol_weight': mol_weight,
-        'logp': logp,
-        'hdonors': hdonors,
-        'hacceptors': hacceptors, 
-        'img': img_data
-        
-    })
+
+    return render(
+        request,
+        "chemanager/detail.html",
+        {
+            "product": product,
+            "quantity": quantity,
+            "purity": purity,
+            "laboratories": laboratories,
+            "mol_weight": mol_weight,
+            "logp": logp,
+            "hdonors": hdonors,
+            "hacceptors": hacceptors,
+            "img": img_data,
+        },
+    )
+
 
 # -----------------------------------------------------------API Views
 
@@ -303,7 +324,6 @@ def products(request, id=None):
 
     # Edit a product to tag it has favorite
     elif request.method == "PUT":
-        
         # if favorite in path: tag the product as a 'favorite'
         if "favorite" in path:
             try:
@@ -326,7 +346,7 @@ def products(request, id=None):
                     {"message": "Product added to favorite", "action": "favorite"},
                     status=200,
                 )
-                
+
     return JsonResponse({"message": "Bad request"}, status=400)
 
 
@@ -396,9 +416,9 @@ def create_compound(request):
         )
         product.save()
         return JsonResponse(
-                    {"message": "Product successfully created"},
-                    status=200,
-                )
+            {"message": "Product successfully created"},
+            status=200,
+        )
 
     else:
         return JsonResponse({"message": "Bad request"}, status=400)
@@ -415,64 +435,69 @@ def edit_product(request, id):
 
     if not user.is_authenticated:
         return JsonResponse({"message": "Need authentication"}, status=401)
-    
+
     if request.method == "PUT":
-        
         # get the corresponding product and new box with error handling:
         try:
             id = int(id)
             product = Product.objects.get(id=id)
         except ValueError:
-            return JsonResponse({"message": f"Incorrect product id"}, status=400)
+            return JsonResponse({"message": "Incorrect product id"}, status=400)
         except ObjectDoesNotExist:
-            return JsonResponse({"message": f"No product with id {id} found"}, status=404)
-        
+            return JsonResponse(
+                {"message": f"No product with id {id} found"}, status=404
+            )
+
         # Get the data and ensure quality
         data = json.loads(request.body)
 
-        
         # Check if a molecule can be generated from the smile if a smile is specified
-        if data['smile'] == "None" or not data['smile']:
-            data['smile'] = None
+        if data["smile"] == "None" or not data["smile"]:
+            data["smile"] = None
         else:
-            if Chem.MolFromSmiles(data['smile']) is None:
-                return JsonResponse({"message": f"Incorrect Smile code"}, status=400)
-            
-        if not is_valid_cas(data['cas']):
-            return JsonResponse({"message": f"Incorrect cas"}, status=400)
-        
+            if Chem.MolFromSmiles(data["smile"]) is None:
+                return JsonResponse({"message": "Incorrect Smile code"}, status=400)
+
+        if not is_valid_cas(data["cas"]):
+            return JsonResponse({"message": "Incorrect cas"}, status=400)
+
         # get the exact location
         try:
-            lab = Laboratory.objects.get(lab_number=data['laboratory'])
-            box = Box.objects.get(lab=lab ,box_number=data['box'])
+            lab = Laboratory.objects.get(lab_number=data["laboratory"])
+            box = Box.objects.get(lab=lab, box_number=data["box"])
         except ObjectDoesNotExist:
-            return JsonResponse({"message": "The box location does not exist or does not correspond to the selected laboratory"}, status=404)
-        
+            return JsonResponse(
+                {
+                    "message": "The box location does not exist or does not correspond to the selected laboratory"
+                },
+                status=404,
+            )
+
         # update the object
-        product.name=data['name']
-        product.smile=data['smile']
-        product.cas_number=data['cas']
-        product.producer=data['producer']
-        product.quantity=data['quantity']
-        product.purity=data['purity']
-        product.location=box
-        
+        product.name = data["name"]
+        product.smile = data["smile"]
+        product.cas_number = data["cas"]
+        product.producer = data["producer"]
+        product.quantity = data["quantity"]
+        product.purity = data["purity"]
+        product.location = box
+
         try:
             product.clean()
         except ValidationError:
-            return JsonResponse({"message": f"Incorrect quantity or purity"}, status=400)
-              
+            return JsonResponse({"message": "Incorrect quantity or purity"}, status=400)
+
         product.save()
-        
+
         return JsonResponse({"message": "Product updated succesfully"}, status=200)
-        
+
     # If wrong method, return error
     return JsonResponse({"message": "Bad request"}, status=400)
-    
+
 
 def delete_box(request, id):
     """API view to delete a box from a laboratory. All products still inside the box are displaced in an 'undefined' box inside the same laboratory.
-    
+
     URL: "/box/<int:id>/delete
     method: "DELETE"
     """
@@ -481,76 +506,86 @@ def delete_box(request, id):
 
     if not user.is_authenticated:
         return JsonResponse({"message": "Need authentication"}, status=401)
-    
+
     if request.method == "DELETE":
-        
         # get the corresponding box to delete
         try:
             box_to_delete = Box.objects.get(id=id)
         except ObjectDoesNotExist:
             return JsonResponse({"message": "Box not found"}, status=404)
-        
+
         # get all the products from the current box
         products = box_to_delete.products.all()
-        
+
         # If products, displace all of them in an 'unclassified' box
         if products:
-            
-            # Get the 'unclassified box' of the same lab 
-            unclassified_box, created = Box.objects.get_or_create(box_number='unclassified', lab=box_to_delete.lab )
-            
+            # Get the 'unclassified box' of the same lab
+            unclassified_box, created = Box.objects.get_or_create(
+                box_number="unclassified", lab=box_to_delete.lab
+            )
+
             if unclassified_box == box_to_delete:
-                return JsonResponse({"message": "Cannot remove unclassified box if there is still products"}, status=400)
-            
+                return JsonResponse(
+                    {
+                        "message": "Cannot remove unclassified box if there is still products"
+                    },
+                    status=400,
+                )
+
             # move all the products
-            products.update(location=unclassified_box)        
-        
+            products.update(location=unclassified_box)
+
         # delete the box and sent confirmation JsonResponse
         box_to_delete.delete()
         return JsonResponse({"message": "Product deleted successfully"}, status=200)
-    
+
     # If wrong method, return error
     return JsonResponse({"message": "Bad request"}, status=400)
 
 
 def create_box(request):
     """API route to create a new box in the specified laboratory
-    
+
     URL: "box/create"
     method: "POST"
-    body: 'labId', 'boxNumber' 
+    body: 'labId', 'boxNumber'
     """
     # check authentification
     user = request.user
 
     if not user.is_authenticated:
         return JsonResponse({"message": "Need authentication"}, status=401)
-    
+
     if request.method == "POST":
         # fetch the data from the body
         data = json.loads(request.body)
-        
-        if not data['labId'] or not data['boxNumber']:
+
+        if not data["labId"] or not data["boxNumber"]:
             return JsonResponse({"message": "Bad request"}, status=400)
         try:
-            lab_id = int(data['labId'])
-            box_number = data['boxNumber']
+            lab_id = int(data["labId"])
+            box_number = data["boxNumber"]
             if lab_id < 0:
                 raise ValueError
         except ValueError:
-            return JsonResponse({"message": "Please enter a correct id"}, status=400)
-        
+            return JsonResponse({"message": "Incorrect lab id"}, status=400)
+
         # get the laboratory where to create the box
         try:
             lab = Laboratory.objects.get(id=lab_id)
         except ObjectDoesNotExist:
-            return JsonResponse({"message": "laboratory in which the box should be created does not exist"}, status=404)
-        
+            return JsonResponse(
+                {
+                    "message": "laboratory in which the box should be created does not exist"
+                },
+                status=404,
+            )
+
         # create the box and return a positive response
         box = Box.objects.create(lab=lab, box_number=box_number)
         box.save()
         return JsonResponse({"message": "Box successfully created"}, status=200)
-        
+
     # If wrong method, return error
     return JsonResponse({"message": "Bad request"}, status=400)
 

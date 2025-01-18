@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("chemanager", "0004_product_smiles_alter_product_purity"),
     ]

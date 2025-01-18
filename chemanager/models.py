@@ -87,34 +87,32 @@ class Product(models.Model):
             "purity": self.purity,
             "cas": self.cas_number,
             "producer": self.producer,
-            "lab": self.location.lab.lab_number if self.location else 'No lab',
-            "box": self.location.box_number if self.location else 'unassigned',
+            "lab": self.location.lab.lab_number if self.location else "No lab",
+            "box": self.location.box_number if self.location else "unassigned",
             "creationDate": self.creation_date,
             "updateDate": self.update_date,
             "isFavorite": self.is_favorite(user),
         }
-    
+
     # Check the datas while saving an instance and raise an error if something is wrong
     def clean(self):
-        
         # check quantity and purity
         if self.quantity:
             try:
                 if float(self.quantity) <= 0:
                     raise ValueError
             except (TypeError, ValueError):
-                raise ValidationError('Incorrect quantity')
+                raise ValidationError("Incorrect quantity")
             self.quantity = round(float(self.quantity), 3)
         else:
             self.quantity = 0
-        
+
         if self.purity:
             try:
                 if not (0 <= float(self.purity) <= 100):
                     raise ValueError
             except (TypeError, ValueError):
-                raise ValidationError('Incorrect purity') 
+                raise ValidationError("Incorrect purity")
             self.purity = round(float(self.purity), 1)
         else:
             self.purity = 0
-     

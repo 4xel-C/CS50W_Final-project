@@ -48,7 +48,13 @@
     </div>
   </div>
 
-    {% comment %} Lab locations personnalisation {% endcomment %}
+    <!-- Lab locations personnalisation -->
+  {% if not userLab %}
+  <div class="container mb-4">
+    <h2 class="page-title">You are not assigned to a laboratory</span></h1>
+  </div>
+
+  {% else %}
   <div class="container mb-4">
       <h2 class="page-title">Laboratory {{ userLab }} locations</span></h1>
   </div>
@@ -103,6 +109,7 @@
     </div>
 
   </div>
+  {% endif %}
 
 
     <!-- Modal for password change form -->
