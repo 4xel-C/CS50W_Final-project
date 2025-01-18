@@ -109,7 +109,7 @@ The application was build to ensure data quality and an easy-to-use interface to
 - **api.js:** Contains functions for interacting with the backend API.
 
 ## Limitation and improvement possibilities
-Chemanager is meant to be used to improve organization. It's not meant to track security or toxicity of compounds, which would require the user to specify much more information concerning products, making the user experience less ergonomic and heavier to use in a day to day basis. The security aspect may be automaticly implemented using APIs by fetching hazard statements (H phrases) using the CAS number of the molcules:
+Chemanager is meant to be used to improve organization. It's not meant to track security or toxicity of compounds, which would require the user to specify much more information concerning products, making the user experience less ergonomic and heavier to use in a day to day basis. The security aspect may be automaticly implemented using APIs by fetching hazard statements (H phrases) using the CAS number of the molecules:
 - https://github.com/khoivan88/find_sds (for safety data sheet)
 - https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest (API to fetch chemical datas, may be used to fetch the hazard statements)
 Using these methods may require an extended data analysis to make sure no compounds are ignored and should be cautiously monitored.
